@@ -45,8 +45,8 @@ public class RoomAdminController {
 
     @Operation(summary = "전체 객실 조회", description = "등록된 모든 객실 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<SuccessResponse> getAllRooms() {
-        Log.info("Request to fetch all rooms");
+    public ResponseEntity<SuccessResponse> getAllRooms(@AuthInfo Member member) {
+        Log.info("[admin:" + member.getId() + "] Request to fetch all rooms");
 
         List<RoomResponse> rooms = roomAdminService.getAllRooms();
 
