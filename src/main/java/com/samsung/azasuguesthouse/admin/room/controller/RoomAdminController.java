@@ -1,5 +1,6 @@
 package com.samsung.azasuguesthouse.admin.room.controller;
 
+import com.samsung.azasuguesthouse.admin.room.dto.RoomModifyRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
 import com.samsung.azasuguesthouse.admin.room.service.RoomAdminService;
@@ -54,5 +55,18 @@ public class RoomAdminController {
         response.putData("rooms", rooms);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "객실 정보 수정", description = "기존 객실 정보를 수정합니다. 사진은 변경 시에만 전송합니다.")
+    @PostMapping(value = "/{id}/modify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<SuccessResponse> modifyRoom(
+            @PathVariable long id,
+            @Valid @ModelAttribute RoomModifyRequest modifyDto) {
+
+        log.info("Request to modify room id: {}, name: {}", id, modifyDto.getRoomName());
+
+        roomAdminService.modifyRoom(id, modifyDto);
+
+        return ResponseEntity.ok(new SuccessResponse()); // 성공 시 status 200, msg SUCCESS
     }
 }

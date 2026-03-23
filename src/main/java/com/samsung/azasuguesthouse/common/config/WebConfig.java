@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(1);
         registry.addInterceptor(sessionCheckInterceptor)
                 .addPathPatterns("/api/v1/**")
-                .excludePathPatterns("/api/v1/admin/rooms", "/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/my-info", "/api/v1/auth/change-pw");
+                .excludePathPatterns("/api/v1/admin/rooms/**", "/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/my-info", "/api/v1/auth/change-pw")
                 .order(2);
     }
 
