@@ -11,4 +11,5 @@ public interface RoomAdminService {
     void registerRoom(RoomRequest dto);
     List<RoomResponse> getAllRooms();
     void modifyRoom(long id, RoomModifyRequest dto);
+    void updateActivation(long id, boolean isActive);
 }

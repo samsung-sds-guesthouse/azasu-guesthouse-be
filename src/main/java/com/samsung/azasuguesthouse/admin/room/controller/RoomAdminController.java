@@ -70,4 +70,18 @@ public class RoomAdminController {
 
         return ResponseEntity.ok(new SuccessResponse()); // 성공 시 status 200, msg SUCCESS
     }
+
+    @Operation(summary = "객실 활성화/비활성화", description = "객실의 예약 가능 상태를 변경합니다.")
+    @PostMapping("/{id}/activation")
+    public ResponseEntity<SuccessResponse> updateActivation(
+            @AuthInfo Member member,
+            @PathVariable long id,
+            @RequestParam("is_active") boolean isActive) {
+
+        Log.info("[admin:" + member.getId() + "] Request to set room id: " + id + " active=" + isActive);
+
+        roomAdminService.updateActivation(id, isActive);
+
+        return ResponseEntity.ok(new SuccessResponse());
+    }
 }

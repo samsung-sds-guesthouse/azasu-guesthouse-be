@@ -80,6 +80,13 @@ public class RoomAdminServiceImpl implements RoomAdminService {
         roomAdminMapper.update(room); //
     }
 
+    @Transactional
+    @Override
+    public void updateActivation(long id, boolean isActive) {
+        RoomStatus status = isActive ? RoomStatus.ACTIVE : RoomStatus.INACTIVE;
+        roomAdminMapper.updateStatus(id, status.name());
+    }
+
     private Room toEntity(RoomRequest dto) {
         Room room = new Room();
         room.setRoomName(dto.getRoomName());
