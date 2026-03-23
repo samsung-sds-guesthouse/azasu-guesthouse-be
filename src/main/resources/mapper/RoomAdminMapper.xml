@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.samsung.azasuguesthouse.admin.room.mapper.RoomAdminMapper">
+
+    <resultMap id="RoomResultMap" type="com.samsung.azasuguesthouse.entity.room.Room">
+        <id property="id" column="id" />
+        <result property="roomName" column="room_name" />
+        <result property="capacity" column="capacity" />
+        <result property="price" column="price" />
+        <result property="description" column="description" />
+        <result property="policy" column="policy" />
+        <result property="picture" column="picture" />
+        <result property="status" column="status" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.samsung.azasuguesthouse.entity.room.Room" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO rooms (room_name, capacity, price, description, policy, picture, status, created_at, updated_at)
+        VALUES (#{roomName}, #{capacity}, #{price}, #{description}, #{policy}, #{picture}, #{status}, NOW(), NOW())
+    </insert>
+
+    <select id="findAll" resultMap="RoomResultMap">
+        SELECT * FROM rooms ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="RoomResultMap">
+        SELECT * FROM rooms WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="com.samsung.azasuguesthouse.entity.room.Room">
+        UPDATE rooms
+        SET room_name = #{roomName},
+        capacity = #{capacity},
+        price = #{price},
+        description = #{description},
+        policy = #{policy},
+        <if test="picture != null">
+            picture = #{picture},
+        </if>
+        updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE rooms SET status = #{status}, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM rooms WHERE id = #{id}
+    </delete>
+
+</mapper>
