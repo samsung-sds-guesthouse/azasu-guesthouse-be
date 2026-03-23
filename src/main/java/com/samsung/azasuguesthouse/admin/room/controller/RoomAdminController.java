@@ -42,13 +42,12 @@ public class RoomAdminController {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<SuccessResponse> addRoom(@Valid @ModelAttribute RoomRequest roomDto) throws IOException {
+    public ResponseEntity<SuccessResponse> addRoom(@Valid @ModelAttribute RoomRequest roomDto) {
 
         log.info("Request to add room: name={}, price={}", roomDto.getRoomName(), roomDto.getPrice());
 
         // 비즈니스 로직 수행
-        // 실패 시 Service에서 InvalidImageFileException 등을 던지면 ExceptionResponseHandler가 400 응답을 처리함
-        roomAdminService.registerRoom(roomDto, roomDto.getPicture());
+        roomAdminService.registerRoom(roomDto);
 
         log.info("Successfully registered room: {}", roomDto.getRoomName());
 

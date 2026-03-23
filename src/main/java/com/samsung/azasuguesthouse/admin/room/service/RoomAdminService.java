@@ -7,6 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface RoomAdminService {
-    @Transactional
-    void registerRoom(RoomRequest dto, MultipartFile file) throws IOException;
+    void registerRoom(RoomRequest dto);
 }
