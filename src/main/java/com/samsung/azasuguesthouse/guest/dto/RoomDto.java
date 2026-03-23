@@ -14,10 +14,10 @@ public class RoomDto {
     private String description;
     private String policy;
 
-    public RoomDto() {
-    }
+//    public RoomDto() {
+//    }
 
-    public RoomDto(long roomId, String roomName, Integer price, Integer capacity,
+    public RoomDto(long roomId,String roomName, Integer price, Integer capacity,
                    byte[] picture, String description, String policy) {
         this.roomId = roomId;
         this.roomName = roomName;

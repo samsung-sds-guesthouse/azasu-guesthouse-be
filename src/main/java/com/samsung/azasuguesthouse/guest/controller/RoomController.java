@@ -17,7 +17,7 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/rooms/{id}")
     public ResponseEntity<SuccessResponse> getRoomById(
             @PathVariable("id") long roomId
     ) {
