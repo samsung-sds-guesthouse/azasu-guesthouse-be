@@ -4,8 +4,10 @@ import com.samsung.azasuguesthouse.admin.room.dto.RoomModifyRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
 import com.samsung.azasuguesthouse.admin.room.service.RoomAdminService;
+import com.samsung.azasuguesthouse.common.auth.AuthInfo;
 import com.samsung.azasuguesthouse.common.log.Log;
 import com.samsung.azasuguesthouse.common.response.SuccessResponse;
+import com.samsung.azasuguesthouse.entity.member.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,14 +31,14 @@ public class RoomAdminController {
 
     @Operation(summary = "객실 등록", description = "새로운 객실 정보를 등록합니다. 이미지 파일(MultipartFile)을 포함할 수 있습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<SuccessResponse> addRoom(@Valid @ModelAttribute RoomRequest roomDto) {
+    public ResponseEntity<SuccessResponse> addRoom(@AuthInfo Member member, @Valid @ModelAttribute RoomRequest roomDto) {
 
-        Log.info("Request to add room: name=" + roomDto.getRoomName() + ", price=" + roomDto.getPrice());
+        Log.info("[admin:" + member.getId() + "] Request to add room: name=" + roomDto.getRoomName() + ", price=" + roomDto.getPrice());
 
         // 비즈니스 로직 수행
         roomAdminService.registerRoom(roomDto);
 
-        Log.info("Successfully registered room: " + roomDto.getRoomName());
+        Log.info("[admin:" + member.getId() + "] Successfully registered room: " + roomDto.getRoomName());
 
         return ResponseEntity.ok(new SuccessResponse());
     }
@@ -58,10 +60,11 @@ public class RoomAdminController {
     @Operation(summary = "객실 정보 수정", description = "기존 객실 정보를 수정합니다. 사진은 변경 시에만 전송합니다.")
     @PostMapping(value = "/{id}/modify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse> modifyRoom(
+            @AuthInfo Member member,
             @PathVariable long id,
             @Valid @ModelAttribute RoomModifyRequest modifyDto) {
 
-        Log.info("Request to modify room id: " + id + ", name: " + modifyDto.getRoomName());
+        Log.info("[admin:" + member.getId() + "] Request to modify room id: " + id + ", name: " + modifyDto.getRoomName());
 
         roomAdminService.modifyRoom(id, modifyDto);
 
