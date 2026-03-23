@@ -1,6 +1,7 @@
 package com.samsung.azasuguesthouse.common.response;
 
 import com.samsung.azasuguesthouse.common.auth.UnauthorizedException;
+import com.samsung.azasuguesthouse.common.log.Log;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +28,9 @@ public class ExceptionResponseHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(Exception e) {
+        Log.error(e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new ExceptionResponse(HttpServletResponse.SC_BAD_REQUEST, e.getClass().getName()));
+                .body(new ExceptionResponse(HttpServletResponse.SC_BAD_REQUEST, "FAIL"));
     }
 }
