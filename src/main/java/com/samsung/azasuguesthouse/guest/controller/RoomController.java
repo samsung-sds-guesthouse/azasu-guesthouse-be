@@ -1,5 +1,6 @@
 package com.samsung.azasuguesthouse.guest.controller;
 
+import com.samsung.azasuguesthouse.common.response.SuccessResponse;
 import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import com.samsung.azasuguesthouse.guest.service.RoomService;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,15 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoomDto> getRoomById(
+    public ResponseEntity<SuccessResponse> getRoomById(
             @PathVariable("id") long roomId
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(roomService.getRoomById(roomId));
+        SuccessResponse response = new SuccessResponse();
+        response.putData("room", roomService.getRoomById(roomId));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
 }

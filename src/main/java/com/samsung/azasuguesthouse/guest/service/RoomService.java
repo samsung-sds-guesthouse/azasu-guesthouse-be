@@ -18,7 +18,6 @@ public class RoomService {
     public RoomDto getRoomById(long roomId) {
 
         Room room = roomMapper.findById(roomId);
-        System.out.println(room.toString());
 
         return new RoomDto(
                 room.getId(),
