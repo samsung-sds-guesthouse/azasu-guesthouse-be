@@ -15,11 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @Tag(name = "Admin Room API", description = "관리자 전용 객실 관리 API")
 @RestController
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoomAdminController {
 
     private static final Logger log = LoggerFactory.getLogger(RoomAdminController.class);
-
     private final RoomAdminService roomAdminService;
 
     public RoomAdminController(RoomAdminService roomAdminService) {
@@ -42,25 +42,16 @@ public class RoomAdminController {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addRoom(
-            @Valid @ModelAttribute RoomRequest roomDto,
-            BindingResult bindingResult) {
+    public ResponseEntity<SuccessResponse> addRoom(@Valid @ModelAttribute RoomRequest roomDto) throws IOException {
 
-        log.info("Request to add room received. Room Name: {}, Capacity: {}, Price: {}", 
-                roomDto.getRoomName(), roomDto.getCapacity(), roomDto.getPrice());
+        log.info("Request to add room: name={}, price={}", roomDto.getRoomName(), roomDto.getPrice());
 
-        if (bindingResult.hasErrors()) {
-            log.warn("Validation errors occurred: {}", bindingResult.getAllErrors());
-            return ResponseEntity.badRequest().body(new ExceptionResponse(400, "Validation failed"));
-        }
+        // 비즈니스 로직 수행
+        // 실패 시 Service에서 InvalidImageFileException 등을 던지면 ExceptionResponseHandler가 400 응답을 처리함
+        roomAdminService.registerRoom(roomDto, roomDto.getPicture());
 
-        try {
-            roomAdminService.registerRoom(roomDto, roomDto.getPicture());
-            log.info("Successfully registered room: {}", roomDto.getRoomName());
-            return ResponseEntity.ok(new SuccessResponse());
-        } catch (Exception e) {
-            log.error("Error occurred while registering room: {}", roomDto.getRoomName(), e);
-            return ResponseEntity.badRequest().body(new ExceptionResponse(400, "FAIL"));
-        }
+        log.info("Successfully registered room: {}", roomDto.getRoomName());
+
+        return ResponseEntity.ok(new SuccessResponse());
     }
 }
