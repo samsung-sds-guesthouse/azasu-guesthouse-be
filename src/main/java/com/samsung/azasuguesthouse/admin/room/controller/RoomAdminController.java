@@ -4,12 +4,11 @@ import com.samsung.azasuguesthouse.admin.room.dto.RoomModifyRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
 import com.samsung.azasuguesthouse.admin.room.service.RoomAdminService;
+import com.samsung.azasuguesthouse.common.log.Log;
 import com.samsung.azasuguesthouse.common.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,6 @@ import java.util.List;
 @RequestMapping("/api/v1/admin/rooms")
 public class RoomAdminController {
 
-    private static final Logger log = LoggerFactory.getLogger(RoomAdminController.class);
     private final RoomAdminService roomAdminService;
 
     public RoomAdminController(RoomAdminService roomAdminService) {
@@ -33,12 +31,12 @@ public class RoomAdminController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse> addRoom(@Valid @ModelAttribute RoomRequest roomDto) {
 
-        log.info("Request to add room: name={}, price={}", roomDto.getRoomName(), roomDto.getPrice());
+        Log.info("Request to add room: name=" + roomDto.getRoomName() + ", price=" + roomDto.getPrice());
 
         // 비즈니스 로직 수행
         roomAdminService.registerRoom(roomDto);
 
-        log.info("Successfully registered room: {}", roomDto.getRoomName());
+        Log.info("Successfully registered room: " + roomDto.getRoomName());
 
         return ResponseEntity.ok(new SuccessResponse());
     }
@@ -46,7 +44,7 @@ public class RoomAdminController {
     @Operation(summary = "전체 객실 조회", description = "등록된 모든 객실 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<SuccessResponse> getAllRooms() {
-        log.info("Request to fetch all rooms");
+        Log.info("Request to fetch all rooms");
 
         List<RoomResponse> rooms = roomAdminService.getAllRooms();
 
@@ -63,7 +61,7 @@ public class RoomAdminController {
             @PathVariable long id,
             @Valid @ModelAttribute RoomModifyRequest modifyDto) {
 
-        log.info("Request to modify room id: {}, name: {}", id, modifyDto.getRoomName());
+        Log.info("Request to modify room id: " + id + ", name: " + modifyDto.getRoomName());
 
         roomAdminService.modifyRoom(id, modifyDto);
 
