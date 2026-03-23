@@ -23,10 +23,18 @@ public class RequestLogInterceptor implements HandlerInterceptor {
             elapsedTime = Instant.now().toEpochMilli() - start.toEpochMilli();
         }
 
+        String msg = "-";
+        if (ex != null) {
+            msg = ex.getMessage();
+        } else if (request.getAttribute("exception_msg") != null && request.getAttribute("exception_msg") instanceof String exceptionMsg) {
+            msg = exceptionMsg;
+        }
+
         Log.request(
                 response.getStatus(),
                 memberId,
-                ex == null ? "-" : ex.getMessage(),
+                msg,
+                request.getMethod(),
                 request.getRequestURI(),
                 request.getParameterMap(),
                 elapsedTime

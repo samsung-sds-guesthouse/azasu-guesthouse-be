@@ -30,7 +30,7 @@ public class Log {
     // request
     private final Logger requestLogger = LoggerFactory.getLogger("request");
 
-    public static void request(int httpStatus, long memberId, String msg, String uri, Map<String, String[]> paramMap, long elapsedTime) {
+    public static void request(int httpStatus, long memberId, String msg, String method, String uri, Map<String, String[]> paramMap, long elapsedTime) {
         if (msg == null) {
             msg = "-";
         } else {
@@ -50,10 +50,11 @@ public class Log {
         }
 
         instance.requestLogger.info(
-                "{} {} {} {}?{} {}",
+                "{} {} {} {} {}?{} {}",
                 httpStatus,
                 memberId == 0 ? "-" : memberId,
                 msg,
+                method,
                 uri == null ? "/" : uri,
                 queryString,
                 elapsedTime
