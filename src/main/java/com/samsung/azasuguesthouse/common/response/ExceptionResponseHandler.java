@@ -1,7 +1,7 @@
 package com.samsung.azasuguesthouse.common.response;
 
-import com.samsung.azasuguesthouse.admin.common.exception.FileProcessingException;
-import com.samsung.azasuguesthouse.admin.common.exception.InvalidImageFileException;
+import com.samsung.azasuguesthouse.common.exception.FileProcessingException;
+import com.samsung.azasuguesthouse.common.exception.InvalidImageFileException;
 import com.samsung.azasuguesthouse.common.auth.UnauthorizedException;
 import com.samsung.azasuguesthouse.common.log.Log;
 import jakarta.servlet.http.HttpServletRequest;

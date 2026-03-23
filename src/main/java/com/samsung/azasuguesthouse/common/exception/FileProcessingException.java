@@ -1,4 +1,4 @@
-package com.samsung.azasuguesthouse.admin.common.exception;
+package com.samsung.azasuguesthouse.common.exception;
 
 /**
  * 파일 읽기/쓰기 중 IO 오류가 발생했을 때 발생하는 예외.

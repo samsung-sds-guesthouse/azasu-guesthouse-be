@@ -1,6 +1,6 @@
 package com.samsung.azasuguesthouse.admin.room.service;
 
-import com.samsung.azasuguesthouse.admin.common.exception.FileProcessingException;
+import com.samsung.azasuguesthouse.common.exception.FileProcessingException;
 import com.samsung.azasuguesthouse.admin.common.util.ImageValidator;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomModifyRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;

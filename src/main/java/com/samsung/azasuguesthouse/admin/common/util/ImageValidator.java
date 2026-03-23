@@ -1,6 +1,6 @@
 package com.samsung.azasuguesthouse.admin.common.util;
 
-import com.samsung.azasuguesthouse.admin.common.exception.InvalidImageFileException;
+import com.samsung.azasuguesthouse.common.exception.InvalidImageFileException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
