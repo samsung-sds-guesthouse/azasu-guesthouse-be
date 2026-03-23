@@ -3,6 +3,8 @@ package com.samsung.azasuguesthouse.common.response;
 import com.samsung.azasuguesthouse.admin.common.exception.FileProcessingException;
 import com.samsung.azasuguesthouse.admin.common.exception.InvalidImageFileException;
 import com.samsung.azasuguesthouse.common.auth.UnauthorizedException;
+import com.samsung.azasuguesthouse.common.log.Log;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class ExceptionResponseHandler {
@@ -19,7 +22,8 @@ public class ExceptionResponseHandler {
 
     // 401: 인증 실패
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ExceptionResponse> handleUnauthorizedException(UnauthorizedException e) {
+    public ResponseEntity<ExceptionResponse> handleUnauthorizedException(UnauthorizedException e, HttpServletRequest request) {
+        request.setAttribute("exception_msg", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ExceptionResponse(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"));

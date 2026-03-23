@@ -23,13 +23,13 @@ public class SuccessResponse {
 
     public SuccessResponse(Map<String, Object> data) {
         this.status = HttpServletResponse.SC_OK;
-        this.data = data;
+        this.data = new HashMap<>(data);
         this.data.put("msg", "SUCCESS");
     }
 
     public SuccessResponse(Map<String, Object> data, String msg) {
         this.status = HttpServletResponse.SC_OK;
-        this.data = data;
+        this.data = new HashMap<>(data);
         this.data.put("msg", msg);
     }
 
