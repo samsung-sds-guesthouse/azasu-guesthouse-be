@@ -3,6 +3,7 @@ package com.samsung.azasuguesthouse.admin.room.service;
 import com.samsung.azasuguesthouse.admin.common.exception.FileProcessingException;
 import com.samsung.azasuguesthouse.admin.common.util.ImageValidator;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;
+import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
 import com.samsung.azasuguesthouse.admin.room.mapper.RoomAdminMapper;
 import com.samsung.azasuguesthouse.entity.room.Room;
 import com.samsung.azasuguesthouse.entity.room.RoomStatus;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomAdminServiceImpl implements RoomAdminService {
@@ -31,6 +34,18 @@ public class RoomAdminServiceImpl implements RoomAdminService {
 
         // 3. DB 저장
         roomAdminMapper.insert(room);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<RoomResponse> getAllRooms() {
+        // 1. Mapper를 통해 모든 Room 엔티티 조회
+        List<Room> rooms = roomAdminMapper.findAll();
+
+        // 2. Entity 리스트를 RoomResponse(DTO) 리스트로 변환
+        return rooms.stream()
+                .map(RoomResponse::new)
+                .collect(Collectors.toList());
     }
 
     private Room toEntity(RoomRequest dto) {

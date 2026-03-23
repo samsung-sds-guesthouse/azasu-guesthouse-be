@@ -1,11 +1,12 @@
 package com.samsung.azasuguesthouse.admin.room.service;
 
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
 
-import java.io.IOException;
+import java.util.List;
+
 
 public interface RoomAdminService {
     void registerRoom(RoomRequest dto);
+    List<RoomResponse> getAllRooms();
 }
