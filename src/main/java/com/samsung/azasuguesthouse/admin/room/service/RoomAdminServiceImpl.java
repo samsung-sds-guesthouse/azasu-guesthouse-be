@@ -1,7 +1,8 @@
 package com.samsung.azasuguesthouse.admin.room.service;
 
-import com.samsung.azasuguesthouse.admin.common.exception.FileProcessingException;
+import com.samsung.azasuguesthouse.common.exception.FileProcessingException;
 import com.samsung.azasuguesthouse.admin.common.util.ImageValidator;
+import com.samsung.azasuguesthouse.admin.room.dto.RoomModifyRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
 import com.samsung.azasuguesthouse.admin.room.mapper.RoomAdminMapper;
@@ -46,6 +47,44 @@ public class RoomAdminServiceImpl implements RoomAdminService {
         return rooms.stream()
                 .map(RoomResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public void modifyRoom(long id, RoomModifyRequest dto) {
+        // 1. 기존 데이터 존재 확인 (필요 시 추가)
+        // 2. 사진이 전달된 경우에만 유효성 검사 수행
+        if (dto.getPicture() != null && !dto.getPicture().isEmpty()) {
+            ImageValidator.validate(dto.getPicture()); //
+        }
+
+        // 3. 엔티티 생성 및 데이터 세팅
+        Room room = new Room();
+        room.setId(id);
+        room.setRoomName(dto.getRoomName());
+        room.setCapacity(dto.getCapacity());
+        room.setPrice(dto.getPrice());
+        room.setDescription(dto.getDescription());
+        room.setPolicy(dto.getPolicy());
+
+        // 4. 사진 처리 (전달된 경우만 byte[] 변환)
+        try {
+            if (dto.getPicture() != null && !dto.getPicture().isEmpty()) {
+                room.setPicture(dto.getPicture().getBytes());
+            }
+        } catch (IOException e) {
+            throw new FileProcessingException("이미지 파일을 읽는 중 오류가 발생했습니다.", e); //
+        }
+
+        // 5. DB 업데이트 실행
+        roomAdminMapper.update(room); //
+    }
+
+    @Transactional
+    @Override
+    public void updateActivation(long id, boolean isActive) {
+        RoomStatus status = isActive ? RoomStatus.ACTIVE : RoomStatus.INACTIVE;
+        roomAdminMapper.updateStatus(id, status.name());
     }
 
     private Room toEntity(RoomRequest dto) {
