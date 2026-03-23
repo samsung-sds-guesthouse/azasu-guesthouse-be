@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="db" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/db/%d{yyyyMMdd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %level %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/info/%d{yyyyMMdd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/error/%d{yyyyMMdd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="console_debug" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%yellow(%date{yyyy-MM-dd HH:mm:ss.SSS}) %M#%line %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="request" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/request/%d{yyyyMMdd-HH}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="default,local,dev,prod">
+        <root level="INFO" additivity="false">
+            <appender-ref ref="info" />
+            <appender-ref ref="console" />
+        </root>
+        <logger name="debug" level="debug" additivity="false">
+            <appender-ref ref="console_debug"/>
+        </logger>
+        <logger name="org.apache.ibatis" level="WARN" additivity="false">
+            <appender-ref ref="db"/>
+        </logger>
+        <logger name="error" level="info" additivity="false">
+            <appender-ref ref="error"/>
+            <appender-ref ref="console"/>
+        </logger>
+        <logger name="request" level="info" additivity="false">
+            <appender-ref ref="request"/>
+        </logger>
+    </springProfile>
+
+</configuration>
