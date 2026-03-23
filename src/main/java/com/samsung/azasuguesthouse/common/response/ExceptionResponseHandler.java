@@ -16,4 +16,11 @@ public class ExceptionResponseHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ExceptionResponse(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> handleAll(Exception e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionResponse());
+    }
 }
