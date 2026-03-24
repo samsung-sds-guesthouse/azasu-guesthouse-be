@@ -1,40 +1,19 @@
 package com.samsung.azasuguesthouse.admin.reservation.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Base64;
 
 public class ReservationResponse {
 
     private Long id;
-
-    @JsonProperty("guest_id")
     private Long guestId;
-
-    @JsonProperty("guest_name")
     private String guestName;
-
-    @JsonProperty("guest_phone")
     private String guestPhone;
-
-    @JsonProperty("guest_count")
     private Integer guestCount;
-
-    @JsonProperty("room_id")
     private Long roomId;
-
-    @JsonProperty("room_name")
     private String roomName;
-
-    @JsonProperty("check_in")
     private String checkIn;
-
-    @JsonProperty("check_out")
     private String checkOut;
-
     private String status;
-
-    @JsonProperty("total_price")
     private Integer totalPrice;
 
     private String picture; // Base64

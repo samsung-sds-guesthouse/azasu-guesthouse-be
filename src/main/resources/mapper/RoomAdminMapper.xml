@@ -16,18 +16,37 @@
         <result property="updatedAt" column="updated_at" />
     </resultMap>
 
-    <insert id="insert" parameterType="com.samsung.azasuguesthouse.entity.room.Room" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO rooms (room_name, capacity, price, description, policy, picture, status, created_at, updated_at)
-        VALUES (#{roomName}, #{capacity}, #{price}, #{description}, #{policy}, #{picture}, #{status}, NOW(), NOW())
+    <sql id="roomColumns">
+        id, room_name, capacity, price, description, policy, picture, status, created_at, updated_at
+    </sql>
+
+    <insert id="insert" parameterType="com.samsung.azasuguesthouse.entity.room.Room"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO rooms (
+            room_name, capacity, price, description, policy, picture, status, created_at, updated_at
+        ) VALUES (
+                     #{roomName}, #{capacity}, #{price}, #{description}, #{policy}, #{picture}, #{status}, NOW(), NOW()
+                 )
     </insert>
 
     <select id="findAll" resultMap="RoomResultMap">
-        SELECT * FROM rooms ORDER BY created_at DESC
+        SELECT
+        <include refid="roomColumns" />
+        FROM rooms
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="RoomResultMap">
+        SELECT
+        <include refid="roomColumns" />
+        FROM rooms
+        WHERE id = #{id}
     </select>
 
     <update id="update" parameterType="com.samsung.azasuguesthouse.entity.room.Room">
         UPDATE rooms
-        SET room_name = #{roomName},
+        SET
+        room_name = #{roomName},
         capacity = #{capacity},
         price = #{price},
         description = #{description},
@@ -40,7 +59,11 @@
     </update>
 
     <update id="updateStatus">
-        UPDATE rooms SET status = #{status}, updated_at = NOW() WHERE id = #{id}
+        UPDATE rooms
+        SET
+            status = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
     </update>
 
 </mapper>
