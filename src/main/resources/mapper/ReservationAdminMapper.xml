@@ -43,4 +43,12 @@
         SELECT COUNT(*) FROM reservations
     </select>
 
+    <select id="existsById" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM reservations WHERE id = #{id}
+    </select>
+
+    <update id="updateStatus">
+        UPDATE reservations SET status = #{status}, updated_at = NOW() WHERE id = #{id}
+    </update>
+
 </mapper>

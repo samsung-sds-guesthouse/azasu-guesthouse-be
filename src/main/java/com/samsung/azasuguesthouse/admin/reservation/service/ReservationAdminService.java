@@ -9,4 +9,6 @@ public interface ReservationAdminService {
     List<ReservationResponse> getReservations(int page);
 
     int getMaxPage();
+
+    void modifyStatus(long id, String status);
 }

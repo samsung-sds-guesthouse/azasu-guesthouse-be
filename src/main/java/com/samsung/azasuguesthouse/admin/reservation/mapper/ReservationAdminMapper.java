@@ -12,4 +12,8 @@ public interface ReservationAdminMapper {
     List<ReservationResponse> findAllWithDetails(@Param("offset") int offset, @Param("limit") int limit);
 
     int countAll();
+
+    boolean existsById(@Param("id") long id);
+
+    void updateStatus(@Param("id") long id, @Param("status") String status);
 }

@@ -2,6 +2,7 @@ package com.samsung.azasuguesthouse.admin.reservation.service;
 
 import com.samsung.azasuguesthouse.admin.reservation.dto.ReservationResponse;
 import com.samsung.azasuguesthouse.admin.reservation.mapper.ReservationAdminMapper;
+import com.samsung.azasuguesthouse.entity.reservation.ReservationStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,5 +31,22 @@ public class ReservationAdminServiceImpl implements ReservationAdminService {
     public int getMaxPage() {
         int total = reservationAdminMapper.countAll();
         return (int) Math.ceil((double) total / PAGE_SIZE);
+    }
+
+    @Transactional
+    @Override
+    public void modifyStatus(long id, String status) {
+        ReservationStatus reservationStatus;
+        try {
+            reservationStatus = ReservationStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid status value: " + status);
+        }
+
+        if (!reservationAdminMapper.existsById(id)) {
+            throw new IllegalArgumentException("Reservation not found: " + id);
+        }
+
+        reservationAdminMapper.updateStatus(id, reservationStatus.name());
     }
 }
