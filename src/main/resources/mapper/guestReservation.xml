@@ -33,4 +33,17 @@
         WHERE guest_id = #{guestId}
     </select>
 
+    <select id="findAllReservationRanges" resultType="com.samsung.azasuguesthouse.guest.dto.ReservationRangeDto">
+        SELECT
+        room_id AS roomId,
+        check_in AS checkIn,
+        check_out AS checkOut
+        FROM reservations
+        WHERE status != 'CANCELLED'
+        <![CDATA[
+        AND check_out >= CURDATE()
+        AND check_in <= DATE_ADD(CURDATE(), INTERVAL 3 MONTH)
+        ]]>
+    </select>
+
 </mapper>
