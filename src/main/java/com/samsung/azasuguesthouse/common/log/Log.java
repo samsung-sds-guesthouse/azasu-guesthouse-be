@@ -14,6 +14,7 @@ public class Log {
     private final Logger infoLogger = LoggerFactory.getLogger("info");
     private final Logger warnLogger = LoggerFactory.getLogger("warn");
     private final Logger errorLogger = LoggerFactory.getLogger("error");
+    private final Logger adminLogger = LoggerFactory.getLogger("admin");
 
     public static void debug(String msg) {
         instance.debugLogger.debug(msg);
@@ -23,6 +24,9 @@ public class Log {
     }
     public static void warn(String msg) {
         instance.warnLogger.warn(msg);
+    }
+    public static void admin(String msg) {
+        instance.adminLogger.info(msg);
     }
     public static void error(String msg, Throwable t) {
         instance.errorLogger.error(msg, t);

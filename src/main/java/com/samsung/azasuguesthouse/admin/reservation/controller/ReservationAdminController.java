@@ -33,7 +33,7 @@ public class ReservationAdminController {
             @Parameter(hidden = true) @AuthInfo Member member,
             @RequestParam("page") int page
     ) {
-        Log.info("[admin:" + member.getId() + "] Request to fetch reservations, page=" + page);
+        Log.admin("[admin:" + member.getId() + "] Request to fetch reservations, page=" + page);
 
         List<ReservationResponse> reservations = reservationAdminService.getReservations(page);
         int maxPage = reservationAdminService.getMaxPage();
@@ -53,7 +53,7 @@ public class ReservationAdminController {
             @PathVariable long id,
             @Valid @RequestBody ReservationModifyRequest request
     ) {
-        Log.info("[admin:" + member.getId() + "] Request to modify reservation id: " + id + ", status=" + request.getStatus());
+        Log.admin("[admin:" + member.getId() + "] Request to modify reservation id: " + id + ", status=" + request.getStatus());
 
         reservationAdminService.modifyStatus(id, request.getStatus());
 
