@@ -6,6 +6,7 @@ import com.samsung.azasuguesthouse.common.auth.SessionCheckInterceptor;
 import com.samsung.azasuguesthouse.common.log.RequestLogInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -30,13 +31,30 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:5500")
+                .allowedMethods("GET", "POST")
+                .allowCredentials(true);
+    }
+
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(requestLogInterceptor)
                 .addPathPatterns("/**")
                 .order(1);
         registry.addInterceptor(sessionCheckInterceptor)
                 .addPathPatterns("/api/v1/**")
-                .excludePathPatterns("/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/my-info", "/api/v1/auth/change-pw")
+                .excludePathPatterns(
+                        "/api/v1/auth/signup",
+                        "/api/v1/auth/login",
+                        "/api/v1/auth/logout",
+                        "/api/v1/auth/find-id",
+                        "/api/v1/auth/find-pw",
+                        "/api/v1/auth/sms",
+                        "/api/v1/auth/duplicate-id",
+                        "/api/v1/auth/withdraw"
+                )
                 .order(2);
         registry.addInterceptor(adminCheckInterceptor)
                 .addPathPatterns("/api/v1/admin/**")

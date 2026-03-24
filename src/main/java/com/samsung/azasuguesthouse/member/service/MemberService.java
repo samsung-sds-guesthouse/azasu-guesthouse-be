@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -59,6 +60,7 @@ public class MemberService {
             member.setTryCount(0);
             memberDao.updateTry(member);
         }
+        log(member.getId(), "login");
 
         return member;
     }
@@ -75,5 +77,17 @@ public class MemberService {
         String passwordHash = CryptUtil.sha256(info.getPassword(), salt.getSalt());
         member.setPassword(passwordHash);
         memberDao.updatePassword(member);
+    }
+
+    private void log(long memberId, String type) {
+        log(memberId, type, null);
+    }
+
+    private void log(long memberId, String type, String extra) {
+        memberDao.log(Map.of(
+                "member_id", memberId,
+                "type", type,
+                "extra", extra
+        ));
     }
 }

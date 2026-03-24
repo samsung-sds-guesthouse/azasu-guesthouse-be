@@ -18,7 +18,7 @@
 
     <insert id="insert" parameterType="com.samsung.azasuguesthouse.entity.member.Member" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `members`(`login_id`, `password`, `name`, `phone`)
-        VALUES(#{loginId}, '', #{name}, #{phone})
+        VALUES (#{loginId}, '', #{name}, #{phone})
     </insert>
 
     <update id="updatePassword" parameterType="com.samsung.azasuguesthouse.entity.member.Member">
@@ -31,4 +31,9 @@
         SET `try_count` = #{tryCount}, `last_try_at` = #{lastTryAt}
         WHERE `id` = #{id}
     </update>
+
+    <insert id="log" parameterType="map">
+        INSERT INTO `log_auth`(`member_id`, `type`, `extra`)
+        VALUES (#{memberId}, #{type}, #{extra})
+    </insert>
 </mapper>
