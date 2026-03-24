@@ -1,11 +1,20 @@
 package com.samsung.azasuguesthouse.member.dto;
 
 import com.samsung.azasuguesthouse.member.exception.InvalidInputException;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "회원가입 요청")
 public class SignupInfo {
+    @Schema(description = "아이디 (8~15자)", example = "newuser1")
     private String loginId;
+
+    @Schema(description = "비밀번호 (12~20자)", example = "password123456")
     private String password;
+
+    @Schema(description = "이름 (최대 30자)", example = "홍길동")
     private String name;
+
+    @Schema(description = "휴대폰 번호 (010으로 시작하는 11자리)", example = "01012345678")
     private String phone;
 
     public String getLoginId() {
