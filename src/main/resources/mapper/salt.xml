@@ -6,7 +6,12 @@
 <mapper namespace="com.samsung.azasuguesthouse.member.dao.SaltDao">
     <select id="selectByMemberId" parameterType="long" resultType="com.samsung.azasuguesthouse.entity.member.Salt">
         SELECT *
-        FROM salt
-        WHERE member_id = #{memberId}
+        FROM `salts`
+        WHERE `member_id` = #{memberId}
     </select>
+
+    <insert id="insert" parameterType="com.samsung.azasuguesthouse.entity.member.Salt">
+        INSERT INTO `salts`(`member_id`, `salt`)
+        VALUES (#{memberId}, #{salt})
+    </insert>
 </mapper>

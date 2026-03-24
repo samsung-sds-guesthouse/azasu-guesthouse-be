@@ -5,5 +5,12 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface MemberDao {
+    int countByLoginId(String loginId);
+
     Member selectByLoginId(String loginId);
+
+    void insert(Member member);
+
+    void updatePassword(Member member);
+    void updateTry(Member member);
 }
