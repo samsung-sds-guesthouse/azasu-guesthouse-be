@@ -74,8 +74,8 @@
         )
     </insert>
 
-    <insert id="deleteReservation" parameterType="long">
+    <insert id="deleteReservation">
         DELETE FROM reservations
-        WHERE id = #{id}
+        WHERE id = #{id} AND guest_id = #{guestId}
     </insert>
 </mapper>

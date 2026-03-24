@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -98,9 +99,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public void makeReservation(ReservingRequestDto dto) {
-        // 본인 체크 필요
-
+    public void makeReservation(ReservingRequestDto dto, long guestId) {
         // 가능한 날짜 체크 필요
         int overlappingCount = reservationMapper.checkAvailability(
                 dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut()
@@ -111,7 +110,11 @@ public class ReservationService {
         }
 
         // 인원 체크 필요
-        int capacity = roomService.getRoomById(dto.getRoomId().longValue()).getCapacity();
+        RoomDto roomDto = roomService.getRoomById(dto.getRoomId().longValue());
+        int capacity = roomDto.getCapacity();
+
+        long nights = ChronoUnit.DAYS.between(dto.getCheckIn(), dto.getCheckOut());
+        int totalPrice = roomDto.getPrice() * (int) nights;
 
 //        RoomDto room = roomCache.get(dto.getRoomId().longValue());
 //        if (room == null) {
@@ -123,18 +126,18 @@ public class ReservationService {
         }
 
         // DB 삽입
-        reservationMapper.createReservation(2L, dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut(), dto.getGuestCount(), 20000);
+        reservationMapper.createReservation(guestId, dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut(), dto.getGuestCount(), totalPrice);
 
         // 캐시 삭제
         reservationCache.clearAll();
     }
 
     @Transactional
-    public void deleteReservationById(long id) {
+    public void deleteReservationById(long id, long guestId) {
         // 본인 체크 필요
 
         // DB 삭제
-        reservationMapper.deleteReservation(id);
+        reservationMapper.deleteReservation(id, guestId);
 
         // 캐시 삭제
         reservationCache.clearAll();
