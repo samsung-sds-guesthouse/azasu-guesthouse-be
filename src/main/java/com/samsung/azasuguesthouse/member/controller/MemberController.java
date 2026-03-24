@@ -76,4 +76,18 @@ public class MemberController {
                 .status(HttpStatus.OK)
                 .body(new SuccessResponse());
     }
+
+    @Operation(summary = "마이페이지", description = "내 정보를 확인합니다.")
+    @GetMapping("/my-info")
+    public ResponseEntity<SuccessResponse> myInfo(@AuthInfo Member member) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new SuccessResponse(
+                        Map.of(
+                                "login_id", HtmlUtils.htmlEscape(member.getLoginId()),
+                                "name", HtmlUtils.htmlEscape(member.getName()),
+                                "phone", member.getPhone()
+                        )
+                ));
+    }
 }
