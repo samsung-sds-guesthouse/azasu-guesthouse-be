@@ -1,10 +1,9 @@
 package com.samsung.azasuguesthouse.guest.service;
 
 import com.samsung.azasuguesthouse.common.cache.ReservationCache;
+import com.samsung.azasuguesthouse.common.cache.RoomCache;
 import com.samsung.azasuguesthouse.guest.dao.ReservationMapper;
-import com.samsung.azasuguesthouse.guest.dto.PaginationDto;
-import com.samsung.azasuguesthouse.guest.dto.ReservationDto;
-import com.samsung.azasuguesthouse.guest.dto.ReservationRangeDto;
+import com.samsung.azasuguesthouse.guest.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,12 +13,17 @@ import java.util.*;
 @Service
 public class ReservationService {
 
+    private final RoomService roomService;
+
     private final ReservationMapper reservationMapper;
     private final ReservationCache reservationCache;
+    private final RoomCache roomCache;
 
-    public ReservationService(ReservationMapper reservationMapper, ReservationCache reservationCache) {
+    public ReservationService(ReservationMapper reservationMapper, ReservationCache reservationCache, RoomCache roomCache, RoomService roomService) {
         this.reservationMapper = reservationMapper;
         this.reservationCache = reservationCache;
+        this.roomCache = roomCache;
+        this.roomService = roomService;
     }
 
     public List<LocalDate> getReservedDates(Long roomId) {
@@ -29,8 +33,7 @@ public class ReservationService {
             loadAllRoomsToCache();
         }
 
-        reservationCache.
-                printAll();
+        reservationCache.printAll();
 
         // 로딩 후 특정 방 데이터 반환 (없으면 빈 리스트 반환)
         return reservationCache.get(roomId) != null ?
@@ -92,5 +95,48 @@ public class ReservationService {
                 maxPage,
                 reservationMapper.findReservationsByGuestId(guestId, offset, size)
         );
+    }
+
+    @Transactional
+    public void makeReservation(ReservingRequestDto dto) {
+        // 본인 체크 필요
+
+        // 가능한 날짜 체크 필요
+        int overlappingCount = reservationMapper.checkAvailability(
+                dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut()
+        );
+
+        if (overlappingCount > 0) {
+            throw new IllegalStateException("선택하신 기간에 이미 예약이 존재합니다.");
+        }
+
+        // 인원 체크 필요
+        int capacity = roomService.getRoomById(dto.getRoomId().longValue()).getCapacity();
+
+//        RoomDto room = roomCache.get(dto.getRoomId().longValue());
+//        if (room == null) {
+//            throw new IllegalStateException("존재하지 않는 객실입니다.");
+//        }
+//
+        if (dto.getGuestCount() > capacity) {
+            throw new IllegalStateException("예약 인원이 객실 최대 수용 인원을 초과합니다.");
+        }
+
+        // DB 삽입
+        reservationMapper.createReservation(2L, dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut(), dto.getGuestCount(), 20000);
+
+        // 캐시 삭제
+        reservationCache.clearAll();
+    }
+
+    @Transactional
+    public void deleteReservationById(long id) {
+        // 본인 체크 필요
+
+        // DB 삭제
+        reservationMapper.deleteReservation(id);
+
+        // 캐시 삭제
+        reservationCache.clearAll();
     }
 }

@@ -2,13 +2,11 @@ package com.samsung.azasuguesthouse.guest.controller;
 
 import com.samsung.azasuguesthouse.common.response.SuccessResponse;
 import com.samsung.azasuguesthouse.guest.dto.PaginationDto;
+import com.samsung.azasuguesthouse.guest.dto.ReservingRequestDto;
 import com.samsung.azasuguesthouse.guest.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -29,6 +27,33 @@ public class ReservationController {
 
         return ResponseEntity
                 .status((HttpStatus.OK))
+                .body(response);
+    }
+
+    @PostMapping("/reservations")
+    public ResponseEntity<SuccessResponse> createReservation(
+            @RequestBody ReservingRequestDto requestDto
+            ) {
+
+            SuccessResponse response = new SuccessResponse();
+
+            reservationService.makeReservation(requestDto);
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(response);
+    }
+
+    @PostMapping("/reservations/{id}/delete")
+    public ResponseEntity<SuccessResponse> deleteReservation(
+            @PathVariable("id") long id
+    ) {
+        SuccessResponse response = new SuccessResponse();
+
+        reservationService.deleteReservationById(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(response);
     }
 }

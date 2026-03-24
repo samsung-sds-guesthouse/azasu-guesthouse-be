@@ -21,4 +21,22 @@ public interface ReservationMapper {
     int findTotalCountByGuestId(long guestId);
 
     List<ReservationRangeDto> findAllReservationRanges();
+
+    int checkAvailability(
+            @Param("roomId") long roomId,
+            @Param("checkIn") LocalDate checkIn,
+            @Param("checkOut") LocalDate checkOut);
+
+
+    void createReservation(
+            @Param("guestId") long guestId,
+            @Param("roomId") long roomId,
+            @Param("checkIn") LocalDate checkIn,
+            @Param("checkOut") LocalDate checkOut,
+            @Param("guestCount") int guestCount,
+            @Param("totalPrice") int totalPrice);
+
+    void deleteReservation(
+            @Param("id") long id
+    );
 }

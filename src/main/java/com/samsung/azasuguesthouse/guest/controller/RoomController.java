@@ -34,8 +34,15 @@ public class RoomController {
     }
 
     @GetMapping("/rooms")
-    public void getAllRooms() {
-        reservationService.getReservedDates(1L);
+    public ResponseEntity<SuccessResponse> getAllRooms() {
+
+        SuccessResponse response = new SuccessResponse();
+        response.putData("rooms", roomService.getAllRooms());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+
     }
 
 }
