@@ -15,7 +15,6 @@ public class AuthInfoResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        // @LoginUser 어노테이션이 붙어 있는지 확인
         boolean hasLoginAnnotation = parameter.hasParameterAnnotation(AuthInfo.class);
         boolean hasUserType = Member.class.isAssignableFrom(parameter.getParameterType());
 
