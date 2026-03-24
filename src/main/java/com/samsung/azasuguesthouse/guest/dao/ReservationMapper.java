@@ -37,6 +37,9 @@ public interface ReservationMapper {
             @Param("totalPrice") int totalPrice);
 
     void deleteReservation(
-            @Param("id") long id
+            @Param("id") long id,
+            @Param("guestId") long guestId
     );
+
+    void selectRoomForUpdate(long roomId);
 }

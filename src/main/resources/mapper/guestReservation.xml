@@ -50,7 +50,7 @@
         SELECT COUNT(*)
         FROM reservations
         WHERE room_id = #{roomId}
-        AND status = 'CONFIRMED'  AND check_in &lt; #{checkOut}
+        AND (status = 'CONFIRMED' OR status = 'PENDING')  AND check_in &lt; #{checkOut}
         AND check_out &gt; #{checkIn}
     </select>
 
@@ -74,8 +74,16 @@
         )
     </insert>
 
-    <insert id="deleteReservation" parameterType="long">
+    <insert id="deleteReservation">
         DELETE FROM reservations
-        WHERE id = #{id}
+        WHERE id = #{id} AND guest_id = #{guestId}
     </insert>
+
+    <!-- Lock -->
+    <select id="selectRoomForUpdate" resultType="long">
+        SELECT id
+        FROM rooms
+        WHERE id = #{roomId}
+        FOR UPDATE
+    </select>
 </mapper>

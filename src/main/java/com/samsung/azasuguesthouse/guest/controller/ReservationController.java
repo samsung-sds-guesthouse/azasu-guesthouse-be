@@ -1,9 +1,12 @@
 package com.samsung.azasuguesthouse.guest.controller;
 
 import com.samsung.azasuguesthouse.common.response.SuccessResponse;
+import com.samsung.azasuguesthouse.entity.member.Member;
 import com.samsung.azasuguesthouse.guest.dto.PaginationDto;
 import com.samsung.azasuguesthouse.guest.dto.ReservingRequestDto;
 import com.samsung.azasuguesthouse.guest.service.ReservationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +22,13 @@ public class ReservationController {
     }
 
     @GetMapping("/reservations/me")
-    public ResponseEntity<SuccessResponse> getMyReservations(@RequestParam int page) {
-        long guestId = 2L; // session에서 가져와야됨
+    public ResponseEntity<SuccessResponse> getMyReservations(
+            @RequestParam int page,
+            HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("member");
+        long guestId = member.getId();
 
         SuccessResponse response = new SuccessResponse();
         response.putData("reservations", reservationService.getReservationsByGuestId(guestId, page));
@@ -32,25 +40,34 @@ public class ReservationController {
 
     @PostMapping("/reservations")
     public ResponseEntity<SuccessResponse> createReservation(
-            @RequestBody ReservingRequestDto requestDto
-            ) {
+            @RequestBody ReservingRequestDto requestDto,
+            HttpServletRequest request
+    ) {
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("member");
+        long guestId = member.getId();
 
-            SuccessResponse response = new SuccessResponse();
+        SuccessResponse response = new SuccessResponse();
 
-            reservationService.makeReservation(requestDto);
+        reservationService.makeReservation(requestDto, guestId);
 
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(response);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
     @PostMapping("/reservations/{id}/delete")
     public ResponseEntity<SuccessResponse> deleteReservation(
-            @PathVariable("id") long id
+            @PathVariable("id") long id,
+            HttpServletRequest request
     ) {
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("member");
+        long guestId = member.getId();
+
         SuccessResponse response = new SuccessResponse();
 
-        reservationService.deleteReservationById(id);
+        reservationService.deleteReservationById(id, guestId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
