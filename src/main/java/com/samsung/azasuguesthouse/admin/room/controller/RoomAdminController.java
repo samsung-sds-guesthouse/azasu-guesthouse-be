@@ -60,6 +60,22 @@ public class RoomAdminController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "상세 객실 조회", description = "roomId 기반 상세 객실을 조회합니다.")
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse> getRoom(
+            @Parameter(hidden = true) @AuthInfo Member member,
+            @PathVariable long id
+    ) {
+        Log.info("[admin:" + member.getId() + "] Request to room id: " + id );
+
+        RoomResponse room = roomAdminService.getRoom(id);
+
+        SuccessResponse response = new SuccessResponse();
+        response.putData("room", room);
+
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "객실 정보 수정", description = "기존 객실 정보를 수정합니다. 사진은 변경 시에만 전송합니다.")
     @PostMapping(value = "/{id}/modify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse> modifyRoom(

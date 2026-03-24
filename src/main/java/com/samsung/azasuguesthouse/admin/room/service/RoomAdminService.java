@@ -10,6 +10,7 @@ import java.util.List;
 public interface RoomAdminService {
     void registerRoom(RoomRequest dto);
     List<RoomResponse> getAllRooms();
+    RoomResponse getRoom(long id);
     void modifyRoom(long id, RoomModifyRequest dto);
     void updateActivation(long id, boolean isActive);
 }
