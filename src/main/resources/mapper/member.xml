@@ -34,6 +34,6 @@
 
     <insert id="log" parameterType="map">
         INSERT INTO `log_auth`(`member_id`, `type`, `extra`)
-        VALUES (#{memberId}, #{type}, #{extra})
+        VALUES (#{member_id}, #{type}, #{extra})
     </insert>
 </mapper>
