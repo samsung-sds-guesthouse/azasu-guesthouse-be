@@ -80,7 +80,10 @@ public class MemberService {
     }
 
     private void log(long memberId, String type) {
-        log(memberId, type, null);
+        memberDao.log(Map.of(
+                "member_id", memberId,
+                "type", type
+        ));
     }
 
     private void log(long memberId, String type, String extra) {
