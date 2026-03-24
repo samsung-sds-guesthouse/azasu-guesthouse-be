@@ -1,5 +1,6 @@
 package com.samsung.azasuguesthouse.common.auth;
 
+import com.samsung.azasuguesthouse.entity.member.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -18,9 +19,10 @@ public class SessionCheckInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession(false);
 
-        if (session == null || session.getAttribute("member") == null) {
+        if (session == null || session.getAttribute("member") == null || !(session.getAttribute("member") instanceof Member member)) {
             throw new UnauthorizedException("invalid_member_session");
         }
+        request.setAttribute("member", member);
 
         return true;
     }
