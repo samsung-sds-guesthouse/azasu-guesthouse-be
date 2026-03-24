@@ -32,6 +32,11 @@
         WHERE `id` = #{id}
     </update>
 
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM `members`
+        WHERE id = #{id}
+    </delete>
+
     <insert id="log" parameterType="map">
         INSERT INTO `log_auth`(`member_id`, `type`, `extra`)
         VALUES (#{member_id}, #{type}, #{extra})

@@ -3,8 +3,10 @@ package com.samsung.azasuguesthouse.member.controller;
 import com.samsung.azasuguesthouse.common.auth.AuthInfo;
 import com.samsung.azasuguesthouse.common.response.SuccessResponse;
 import com.samsung.azasuguesthouse.entity.member.Member;
+import com.samsung.azasuguesthouse.member.dto.ChangePwInfo;
 import com.samsung.azasuguesthouse.member.dto.LoginInfo;
 import com.samsung.azasuguesthouse.member.dto.SignupInfo;
+import com.samsung.azasuguesthouse.member.dto.WithdrawInfo;
 import com.samsung.azasuguesthouse.member.exception.InvalidPasswordException;
 import com.samsung.azasuguesthouse.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -77,6 +79,19 @@ public class MemberController {
                 .body(new SuccessResponse());
     }
 
+    @Operation(summary = "회원탈퇴", description = "로그인된 회원 정보를 삭제합니다.")
+    @PostMapping("/withdraw")
+    public ResponseEntity<SuccessResponse> withdraw(@AuthInfo Member member, @RequestBody WithdrawInfo info, HttpServletRequest request) {
+        memberService.withdraw(member, info);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new SuccessResponse());
+    }
+
     @Operation(summary = "마이페이지", description = "내 정보를 확인합니다.")
     @GetMapping("/my-info")
     public ResponseEntity<SuccessResponse> myInfo(@AuthInfo Member member) {
@@ -89,5 +104,14 @@ public class MemberController {
                                 "phone", member.getPhone()
                         )
                 ));
+    }
+
+    @Operation(summary = "비밀번호 변경", description = "로그인된 회원의 비밀번호를 변경합니다.")
+    @PostMapping("/change-pw")
+    public ResponseEntity<SuccessResponse> changePw(@AuthInfo Member member, @RequestBody ChangePwInfo info) {
+        memberService.changePw(member, info);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new SuccessResponse());
     }
 }

@@ -13,5 +13,11 @@
     <insert id="insert" parameterType="com.samsung.azasuguesthouse.entity.member.Salt">
         INSERT INTO `salts`(`member_id`, `salt`)
         VALUES (#{memberId}, #{salt})
+        ON DUPLICATE KEY UPDATE `salt` = VALUES (`salt`)
     </insert>
+
+    <delete id="deleteByMemberId" parameterType="long">
+        DELETE FROM `salts`
+        WHERE member_id = #{memberId}
+    </delete>
 </mapper>

@@ -8,4 +8,6 @@ public interface SaltDao {
     Salt selectByMemberId(long memberId);
 
     void insert(Salt salt);
+
+    void deleteByMemberId(long memberId);
 }
