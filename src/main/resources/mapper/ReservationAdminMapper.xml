@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.samsung.azasuguesthouse.admin.reservation.mapper.ReservationAdminMapper">
+
+    <resultMap id="ReservationResponseResultMap" type="com.samsung.azasuguesthouse.admin.reservation.dto.ReservationResponse">
+        <id property="id" column="id" />
+        <result property="guestId" column="guest_id" />
+        <result property="guestName" column="guest_name" />
+        <result property="guestPhone" column="guest_phone" />
+        <result property="guestCount" column="guest_count" />
+        <result property="roomId" column="room_id" />
+        <result property="roomName" column="room_name" />
+        <result property="checkIn" column="check_in" />
+        <result property="checkOut" column="check_out" />
+        <result property="status" column="status" />
+        <result property="totalPrice" column="total_price" />
+        <result property="pictureBytes" column="picture" />
+    </resultMap>
+
+    <select id="findAllWithDetails" resultMap="ReservationResponseResultMap">
+        SELECT
+            r.id,
+            r.guest_id,
+            m.name     AS guest_name,
+            m.phone    AS guest_phone,
+            r.guest_count,
+            r.room_id,
+            rm.room_name,
+            r.check_in,
+            r.check_out,
+            r.status,
+            r.total_price,
+            rm.picture
+        FROM reservations r
+        JOIN members m  ON r.guest_id = m.id
+        JOIN rooms rm   ON r.room_id  = rm.id
+        ORDER BY r.created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM reservations
+    </select>
+
+</mapper>
