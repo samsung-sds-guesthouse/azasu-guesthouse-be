@@ -30,9 +30,9 @@ public class ReservationAdminController {
     @Operation(summary = "예약 목록 조회", description = "전체 예약 목록을 페이지 단위(10개)로 조회합니다.")
     @GetMapping
     public ResponseEntity<SuccessResponse> getReservations(
-            @AuthInfo Member member,
-            @RequestParam("page") int page) {
-
+            @Parameter(hidden = true) @AuthInfo Member member,
+            @RequestParam("page") int page
+    ) {
         Log.info("[admin:" + member.getId() + "] Request to fetch reservations, page=" + page);
 
         List<ReservationResponse> reservations = reservationAdminService.getReservations(page);
@@ -51,8 +51,8 @@ public class ReservationAdminController {
     public ResponseEntity<SuccessResponse> modifyReservation(
             @Parameter(hidden = true) @AuthInfo Member member,
             @PathVariable long id,
-            @Valid @RequestBody ReservationModifyRequest request) {
-
+            @Valid @RequestBody ReservationModifyRequest request
+    ) {
         Log.info("[admin:" + member.getId() + "] Request to modify reservation id: " + id + ", status=" + request.getStatus());
 
         reservationAdminService.modifyStatus(id, request.getStatus());
