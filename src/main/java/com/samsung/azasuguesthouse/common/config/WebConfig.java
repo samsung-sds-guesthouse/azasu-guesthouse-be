@@ -52,8 +52,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/v1/auth/find-id",
                         "/api/v1/auth/find-pw",
                         "/api/v1/auth/sms",
-                        "/api/v1/auth/duplicate-id",
-                        "/api/v1/auth/withdraw"
+                        "/api/v1/auth/duplicate-id"
                 )
                 .order(2);
         registry.addInterceptor(adminCheckInterceptor)

@@ -65,11 +65,16 @@ public class MemberService {
         return member;
     }
 
-    public void signup(SignupInfo info) {
-        int exist = memberDao.countByLoginId(info.getLoginId());
-        if (exist > 0) {
-            throw new InvalidInputException("duplicate_login_id");
+    public void logout(Member member) {
+        if (member == null) {
+            return;
         }
+
+        log(member.getId(), "logout");
+    }
+
+    public void signup(SignupInfo info) {
+        duplicateId(info.getLoginId());
         Member member = new Member(info);
         memberDao.insert(member);
         Salt salt = new Salt(member.getId(), UUID.randomUUID().toString());
@@ -77,8 +82,21 @@ public class MemberService {
         String passwordHash = CryptUtil.sha256(info.getPassword(), salt.getSalt());
         member.setPassword(passwordHash);
         memberDao.updatePassword(member);
+        log(member.getId(), "signup", "name=" + member.getName() + ", phone=" + member.getPhone());
     }
 
+    public void duplicateId(String loginId) {
+        if (loginId == null || loginId.length() < 8 || loginId.length() > 15) {
+            throw new InvalidInputException("invalid_login_id");
+        }
+
+        int exist = memberDao.countByLoginId(loginId);
+        if (exist > 0) {
+            throw new InvalidInputException("duplicate_login_id");
+        }
+    }
+
+    // log
     private void log(long memberId, String type) {
         memberDao.log(Map.of(
                 "member_id", memberId,
