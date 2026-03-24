@@ -32,7 +32,10 @@ public class RoomAdminController {
 
     @Operation(summary = "객실 등록", description = "새로운 객실 정보를 등록합니다. 이미지 파일(MultipartFile)을 포함할 수 있습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<SuccessResponse> addRoom(@AuthInfo Member member, @Valid @ModelAttribute RoomRequest roomDto) {
+    public ResponseEntity<SuccessResponse> addRoom(
+            @Parameter(hidden = true) @AuthInfo Member member,
+            @Valid @ModelAttribute RoomRequest roomDto
+    ) {
         Log.info("[admin:" + member.getId() + "] Request to add room: name=" + roomDto.getRoomName() + ", price=" + roomDto.getPrice());
 
         roomAdminService.registerRoom(roomDto);
@@ -44,7 +47,9 @@ public class RoomAdminController {
 
     @Operation(summary = "전체 객실 조회", description = "등록된 모든 객실 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<SuccessResponse> getAllRooms(@AuthInfo Member member) {
+    public ResponseEntity<SuccessResponse> getAllRooms(
+            @Parameter(hidden = true) @AuthInfo Member member
+    ) {
         Log.info("[admin:" + member.getId() + "] Request to fetch all rooms");
 
         List<RoomResponse> rooms = roomAdminService.getAllRooms();
@@ -58,10 +63,10 @@ public class RoomAdminController {
     @Operation(summary = "객실 정보 수정", description = "기존 객실 정보를 수정합니다. 사진은 변경 시에만 전송합니다.")
     @PostMapping(value = "/{id}/modify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse> modifyRoom(
-            @AuthInfo Member member,
+            @Parameter(hidden = true) @AuthInfo Member member,
             @PathVariable long id,
-            @Valid @ModelAttribute RoomModifyRequest modifyDto) {
-
+            @Valid @ModelAttribute RoomModifyRequest modifyDto
+    ) {
         Log.info("[admin:" + member.getId() + "] Request to modify room id: " + id + ", name: " + modifyDto.getRoomName());
 
         roomAdminService.modifyRoom(id, modifyDto);
@@ -74,8 +79,8 @@ public class RoomAdminController {
     public ResponseEntity<SuccessResponse> updateActivation(
             @Parameter(hidden = true) @AuthInfo Member member,
             @PathVariable long id,
-            @RequestParam("is_active") boolean isActive) {
-
+            @RequestParam("is_active") boolean isActive
+    ) {
         Log.info("[admin:" + member.getId() + "] Request to set room id: " + id + " active=" + isActive);
 
         roomAdminService.updateActivation(id, isActive);
