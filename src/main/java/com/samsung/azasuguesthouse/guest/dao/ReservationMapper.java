@@ -40,4 +40,6 @@ public interface ReservationMapper {
             @Param("id") long id,
             @Param("guestId") long guestId
     );
+
+    void selectRoomForUpdate(long roomId);
 }

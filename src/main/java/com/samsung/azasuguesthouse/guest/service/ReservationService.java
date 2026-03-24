@@ -27,49 +27,18 @@ public class ReservationService {
         this.roomService = roomService;
     }
 
+    @Transactional(readOnly = true)
     public List<LocalDate> getReservedDates(Long roomId) {
         // 캐시가 비어있다면 전체 데이터 로딩
         if (reservationCache.isEmpty()) {
             System.out.println("캐시가 비어있습니다. DB에서 전체 데이터를 로드합니다.");
-            loadAllRoomsToCache();
         }
-
-        reservationCache.printAll();
 
         // 로딩 후 특정 방 데이터 반환 (없으면 빈 리스트 반환)
         return reservationCache.get(roomId) != null ?
                 reservationCache.get(roomId) : Collections.emptyList();
     }
 
-    // 전체 데이터를 DB에서 한 번에 가져와 캐시에 채움
-    private synchronized void loadAllRoomsToCache() {
-        // 다시 한 번 비어있는지 확인 (멀티쓰레드 방어)
-        if (reservationCache.isEmpty()) {
-            // DB에서 모든 방의 예약 날짜를 가져옴
-            List<ReservationRangeDto> ranges = reservationMapper.findAllReservationRanges();
-
-            Map<Long, List<LocalDate>> allData = new HashMap<>();
-
-            for (ReservationRangeDto range : ranges) {
-                List<LocalDate> dates = allData.computeIfAbsent(range.getRoomId(), k -> new ArrayList<>());
-
-                // 체크인부터 체크아웃 전날까지 날짜 추가 (박 단위 계산)
-                LocalDate current = range.getCheckIn();
-                while (current.isBefore(range.getCheckOut())) {
-                    dates.add(current);
-                    current = current.plusDays(1);
-                }
-            }
-
-            reservationCache.putAll(allData);
-        }
-    }
-
-    @Transactional
-    public void handleUpdate() {
-        // DB 업데이트 후 캐시 전체 삭제
-        reservationCache.clearAll();
-    }
 
     @Transactional(readOnly = true)
     public PaginationDto<ReservationDto> getReservationsByGuestId(long guestId, int page) {
@@ -82,7 +51,6 @@ public class ReservationService {
         if (page < 1) {
             page = 1;
         }
-
         if (page > maxPage) {
             page = maxPage;
         }
@@ -100,30 +68,33 @@ public class ReservationService {
 
     @Transactional
     public void makeReservation(ReservingRequestDto dto, long guestId) {
-        // 가능한 날짜 체크 필요
+
+        // Lock
+        reservationMapper.selectRoomForUpdate(dto.getRoomId());
+
+        // 날짜 체크
         int overlappingCount = reservationMapper.checkAvailability(
                 dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut()
         );
-
         if (overlappingCount > 0) {
-            throw new IllegalStateException("선택하신 기간에 이미 예약이 존재합니다.");
+            throw new IllegalStateException("이미 예약된 날짜가 포함되어 있습니다.");
         }
 
-        // 인원 체크 필요
+        // 인원 체크
         RoomDto roomDto = roomService.getRoomById(dto.getRoomId().longValue());
+        if (roomDto == null) {
+            throw new IllegalStateException("존재하지 않는 객실입니다.");
+        }
+
         int capacity = roomDto.getCapacity();
-
-        long nights = ChronoUnit.DAYS.between(dto.getCheckIn(), dto.getCheckOut());
-        int totalPrice = roomDto.getPrice() * (int) nights;
-
-//        RoomDto room = roomCache.get(dto.getRoomId().longValue());
-//        if (room == null) {
-//            throw new IllegalStateException("존재하지 않는 객실입니다.");
-//        }
-//
         if (dto.getGuestCount() > capacity) {
             throw new IllegalStateException("예약 인원이 객실 최대 수용 인원을 초과합니다.");
         }
+
+        // 가격 계산
+        long nights = ChronoUnit.DAYS.between(dto.getCheckIn(), dto.getCheckOut());
+        int totalPrice = roomDto.getPrice() * (int) nights;
+
 
         // DB 삽입
         reservationMapper.createReservation(guestId, dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut(), dto.getGuestCount(), totalPrice);
@@ -134,8 +105,6 @@ public class ReservationService {
 
     @Transactional
     public void deleteReservationById(long id, long guestId) {
-        // 본인 체크 필요
-
         // DB 삭제
         reservationMapper.deleteReservation(id, guestId);
 

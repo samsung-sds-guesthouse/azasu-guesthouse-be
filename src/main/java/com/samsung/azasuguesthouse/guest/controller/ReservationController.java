@@ -22,11 +22,12 @@ public class ReservationController {
     }
 
     @GetMapping("/reservations/me")
-    public ResponseEntity<SuccessResponse> getMyReservations(@RequestParam int page, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> getMyReservations(
+            @RequestParam int page,
+            HttpServletRequest request) {
 
         HttpSession session = request.getSession();
         Member member = (Member) session.getAttribute("member");
-//        System.out.println(member.getId());
         long guestId = member.getId();
 
         SuccessResponse response = new SuccessResponse();
