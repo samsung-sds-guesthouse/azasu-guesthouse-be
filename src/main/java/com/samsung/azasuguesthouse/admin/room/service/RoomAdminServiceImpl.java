@@ -1,10 +1,11 @@
 package com.samsung.azasuguesthouse.admin.room.service;
 
+import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
 import com.samsung.azasuguesthouse.common.exception.FileProcessingException;
 import com.samsung.azasuguesthouse.admin.common.util.ImageValidator;
+import com.samsung.azasuguesthouse.admin.room.dto.RoomDetailResponse;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomModifyRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;
-import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
 import com.samsung.azasuguesthouse.admin.room.mapper.RoomAdminMapper;
 import com.samsung.azasuguesthouse.entity.room.Room;
 import com.samsung.azasuguesthouse.entity.room.RoomStatus;
@@ -58,8 +59,8 @@ public class RoomAdminServiceImpl implements RoomAdminService {
      */
     @Transactional(readOnly = true)
     @Override
-    public RoomResponse getRoom(long id) {
-        return new RoomResponse(findRoomOrThrow(id));
+    public RoomDetailResponse getRoom(long id) {
+        return new RoomDetailResponse(findRoomOrThrow(id));
     }
 
     /**

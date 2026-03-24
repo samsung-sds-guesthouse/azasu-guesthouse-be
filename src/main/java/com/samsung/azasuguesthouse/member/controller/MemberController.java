@@ -7,7 +7,6 @@ import com.samsung.azasuguesthouse.member.dto.LoginInfo;
 import com.samsung.azasuguesthouse.member.dto.SignupInfo;
 import com.samsung.azasuguesthouse.member.exception.InvalidPasswordException;
 import com.samsung.azasuguesthouse.member.service.MemberService;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,20 +46,48 @@ public class MemberController {
                 ));
     }
 
+    @Operation(summary = "로그아웃", description = "로그아웃 후 세션을 만료시킵니다.")
+    @PostMapping("/logout")
+    public ResponseEntity<SuccessResponse> logout(@AuthInfo Member member, HttpServletRequest request) {
+        memberService.logout(member);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new SuccessResponse());
+    }
+
     @Operation(summary = "회원가입", description = "신규 회원을 등록합니다.")
     @PostMapping("/signup")
-    public ResponseEntity<SuccessResponse> signup(@RequestBody SignupInfo info, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> signup(@RequestBody SignupInfo info) {
         memberService.signup(info);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new SuccessResponse());
     }
 
-    @Hidden
-    @GetMapping("/test")
-    public ResponseEntity<SuccessResponse> test(@AuthInfo Member member) {
+    @Operation(summary = "아이디 중복 체크", description = "제출한 아이디가 기존에 없던 아이디인지 확인합니다.")
+    @GetMapping("/duplicate-id")
+    public ResponseEntity<SuccessResponse> duplicateId(@RequestParam("login_id") String loginId) {
+        memberService.duplicateId(loginId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new SuccessResponse(Map.of("name", "홍길동")));
+                .body(new SuccessResponse());
+    }
+
+    @Operation(summary = "마이페이지", description = "내 정보를 확인합니다.")
+    @GetMapping("/my-info")
+    public ResponseEntity<SuccessResponse> myInfo(@AuthInfo Member member) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new SuccessResponse(
+                        Map.of(
+                                "login_id", HtmlUtils.htmlEscape(member.getLoginId()),
+                                "name", HtmlUtils.htmlEscape(member.getName()),
+                                "phone", member.getPhone()
+                        )
+                ));
     }
 }

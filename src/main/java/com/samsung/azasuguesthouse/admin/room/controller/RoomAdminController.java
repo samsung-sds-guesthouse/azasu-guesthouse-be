@@ -1,5 +1,6 @@
 package com.samsung.azasuguesthouse.admin.room.controller;
 
+import com.samsung.azasuguesthouse.admin.room.dto.RoomDetailResponse;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomModifyRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
@@ -36,11 +37,11 @@ public class RoomAdminController {
             @Parameter(hidden = true) @AuthInfo Member member,
             @Valid @ModelAttribute RoomRequest roomDto
     ) {
-        Log.info("[admin:" + member.getId() + "] Request to add room: name=" + roomDto.getRoomName() + ", price=" + roomDto.getPrice());
+        Log.admin("[admin:" + member.getId() + "] Request to add room: name=" + roomDto.getRoomName() + ", price=" + roomDto.getPrice());
 
         roomAdminService.registerRoom(roomDto);
 
-        Log.info("[admin:" + member.getId() + "] Successfully registered room: " + roomDto.getRoomName());
+        Log.admin("[admin:" + member.getId() + "] Successfully registered room: " + roomDto.getRoomName());
 
         return ResponseEntity.ok(new SuccessResponse());
     }
@@ -50,7 +51,7 @@ public class RoomAdminController {
     public ResponseEntity<SuccessResponse> getAllRooms(
             @Parameter(hidden = true) @AuthInfo Member member
     ) {
-        Log.info("[admin:" + member.getId() + "] Request to fetch all rooms");
+        Log.admin("[admin:" + member.getId() + "] Request to fetch all rooms");
 
         List<RoomResponse> rooms = roomAdminService.getAllRooms();
 
@@ -66,9 +67,9 @@ public class RoomAdminController {
             @Parameter(hidden = true) @AuthInfo Member member,
             @PathVariable long id
     ) {
-        Log.info("[admin:" + member.getId() + "] Request to room id: " + id );
+        Log.admin("[admin:" + member.getId() + "] Request to room id: " + id );
 
-        RoomResponse room = roomAdminService.getRoom(id);
+        RoomDetailResponse room = roomAdminService.getRoom(id);
 
         SuccessResponse response = new SuccessResponse();
         response.putData("room", room);
@@ -83,7 +84,7 @@ public class RoomAdminController {
             @PathVariable long id,
             @Valid @ModelAttribute RoomModifyRequest modifyDto
     ) {
-        Log.info("[admin:" + member.getId() + "] Request to modify room id: " + id + ", name: " + modifyDto.getRoomName());
+        Log.admin("[admin:" + member.getId() + "] Request to modify room id: " + id + ", name: " + modifyDto.getRoomName());
 
         roomAdminService.modifyRoom(id, modifyDto);
 
@@ -97,7 +98,7 @@ public class RoomAdminController {
             @PathVariable long id,
             @RequestParam("is_active") boolean isActive
     ) {
-        Log.info("[admin:" + member.getId() + "] Request to set room id: " + id + " active=" + isActive);
+        Log.admin("[admin:" + member.getId() + "] Request to set room id: " + id + " active=" + isActive);
 
         roomAdminService.updateActivation(id, isActive);
 
