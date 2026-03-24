@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.samsung.azasuguesthouse.member.dao.SaltDao">
+    <select id="selectByMemberId" parameterType="long" resultType="com.samsung.azasuguesthouse.entity.member.Salt">
+        SELECT *
+        FROM `salts`
+        WHERE `member_id` = #{memberId}
+    </select>
+
+    <insert id="insert" parameterType="com.samsung.azasuguesthouse.entity.member.Salt">
+        INSERT INTO `salts`(`member_id`, `salt`)
+        VALUES (#{memberId}, #{salt})
+    </insert>
+</mapper>
