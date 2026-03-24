@@ -1,5 +1,6 @@
 package com.samsung.azasuguesthouse.admin.room.controller;
 
+import com.samsung.azasuguesthouse.admin.room.dto.RoomDetailResponse;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomModifyRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomRequest;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
@@ -68,7 +69,7 @@ public class RoomAdminController {
     ) {
         Log.info("[admin:" + member.getId() + "] Request to room id: " + id );
 
-        RoomResponse room = roomAdminService.getRoom(id);
+        RoomDetailResponse room = roomAdminService.getRoom(id);
 
         SuccessResponse response = new SuccessResponse();
         response.putData("room", room);
