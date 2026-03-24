@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.samsung.azasuguesthouse.guest.dao.ReservationMapper">
+
+    <select id="findReservationsByGuestId" resultType="com.samsung.azasuguesthouse.guest.dto.ReservationDto">
+        SELECT
+            r.id AS id,
+            r.guest_id AS guestId,
+            r.room_id AS roomId,
+            rm.room_name AS roomName,
+            r.check_in AS checkIn,
+            r.check_out AS checkOut,
+            r.guest_count AS guestCount,
+            r.total_price AS totalPrice,
+            r.status AS status,
+            rm.picture AS picture,
+            r.created_at AS createdAt,
+            r.updated_at AS updatedAt
+        FROM reservations r
+        JOIN rooms rm
+        ON r.room_id = rm.id
+        WHERE r.guest_id = #{guestId}
+        ORDER BY r.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findTotalCountByGuestId" resultType="int">
+        SELECT COUNT(*)
+        FROM reservations
+        WHERE guest_id = #{guestId}
+    </select>
+
+    <select id="findAllReservationRanges" resultType="com.samsung.azasuguesthouse.guest.dto.ReservationRangeDto">
+        SELECT
+        room_id AS roomId,
+        check_in AS checkIn,
+        check_out AS checkOut
+        FROM reservations
+        WHERE status != 'CANCELLED'
+        <![CDATA[
+        AND check_out >= CURDATE()
+        AND check_in <= DATE_ADD(CURDATE(), INTERVAL 3 MONTH)
+        ]]>
+    </select>
+
+    <select id="checkAvailability" resultType="int">
+        SELECT COUNT(*)
+        FROM reservations
+        WHERE room_id = #{roomId}
+        AND status = 'CONFIRMED'  AND check_in &lt; #{checkOut}
+        AND check_out &gt; #{checkIn}
+    </select>
+
+    <insert id="createReservation" parameterType="map" useGeneratedKeys="true">
+        INSERT INTO reservations (
+        guest_id,
+        room_id,
+        check_in,
+        check_out,
+        guest_count,
+        total_price,
+        status
+        ) VALUES (
+        #{guestId},
+        #{roomId},
+        #{checkIn},
+        #{checkOut},
+        #{guestCount},
+        #{totalPrice},
+        'PENDING'
+        )
+    </insert>
+
+    <insert id="deleteReservation" parameterType="long">
+        DELETE FROM reservations
+        WHERE id = #{id}
+    </insert>
+</mapper>
