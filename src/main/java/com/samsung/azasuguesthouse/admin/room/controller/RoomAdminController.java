@@ -9,6 +9,7 @@ import com.samsung.azasuguesthouse.common.log.Log;
 import com.samsung.azasuguesthouse.common.response.SuccessResponse;
 import com.samsung.azasuguesthouse.entity.member.Member;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
@@ -32,10 +33,8 @@ public class RoomAdminController {
     @Operation(summary = "객실 등록", description = "새로운 객실 정보를 등록합니다. 이미지 파일(MultipartFile)을 포함할 수 있습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse> addRoom(@AuthInfo Member member, @Valid @ModelAttribute RoomRequest roomDto) {
-
         Log.info("[admin:" + member.getId() + "] Request to add room: name=" + roomDto.getRoomName() + ", price=" + roomDto.getPrice());
 
-        // 비즈니스 로직 수행
         roomAdminService.registerRoom(roomDto);
 
         Log.info("[admin:" + member.getId() + "] Successfully registered room: " + roomDto.getRoomName());
@@ -50,7 +49,6 @@ public class RoomAdminController {
 
         List<RoomResponse> rooms = roomAdminService.getAllRooms();
 
-        // 요구사항의 JSON 구조(msg, rooms)에 맞게 Map 생성
         SuccessResponse response = new SuccessResponse();
         response.putData("rooms", rooms);
 
@@ -74,7 +72,7 @@ public class RoomAdminController {
     @Operation(summary = "객실 활성화/비활성화", description = "객실의 예약 가능 상태를 변경합니다.")
     @PostMapping("/{id}/activation")
     public ResponseEntity<SuccessResponse> updateActivation(
-            @AuthInfo Member member,
+            @Parameter(hidden = true) @AuthInfo Member member,
             @PathVariable long id,
             @RequestParam("is_active") boolean isActive) {
 

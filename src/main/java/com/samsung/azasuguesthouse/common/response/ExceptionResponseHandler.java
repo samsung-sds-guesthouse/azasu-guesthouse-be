@@ -22,7 +22,7 @@ public class ExceptionResponseHandler {
         request.setAttribute("exception_msg", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(new ExceptionResponse(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"));
+                .body(new ExceptionResponse(HttpServletResponse.SC_UNAUTHORIZED, "UNAUTHORIZED"));
     }
 
     // 400: 검증 오류 (컨트롤러의 @Valid 실패 시 호출됨)
