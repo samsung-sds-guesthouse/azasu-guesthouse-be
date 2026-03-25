@@ -1,6 +1,7 @@
 package com.samsung.azasuguesthouse.admin.room.service;
 
 import com.samsung.azasuguesthouse.admin.room.dto.RoomResponse;
+import com.samsung.azasuguesthouse.common.cache.RoomCache;
 import com.samsung.azasuguesthouse.common.exception.FileProcessingException;
 import com.samsung.azasuguesthouse.admin.common.util.ImageValidator;
 import com.samsung.azasuguesthouse.admin.room.dto.RoomDetailResponse;
@@ -21,9 +22,11 @@ import java.util.stream.Collectors;
 public class RoomAdminServiceImpl implements RoomAdminService {
 
     private final RoomAdminMapper roomAdminMapper;
+    private final RoomCache roomCache;
 
-    public RoomAdminServiceImpl(RoomAdminMapper roomAdminMapper) {
+    public RoomAdminServiceImpl(RoomAdminMapper roomAdminMapper, RoomCache roomCache) {
         this.roomAdminMapper = roomAdminMapper;
+        this.roomCache = roomCache;
     }
 
     /**
@@ -41,6 +44,8 @@ public class RoomAdminServiceImpl implements RoomAdminService {
 
         // 3. 저장
         roomAdminMapper.insert(room);
+
+        roomCache.clearAll();
     }
 
     /**
@@ -83,6 +88,8 @@ public class RoomAdminServiceImpl implements RoomAdminService {
 
         // 4. DB 반영
         roomAdminMapper.update(room);
+
+        roomCache.clearAll();
     }
 
     /**
@@ -96,6 +103,8 @@ public class RoomAdminServiceImpl implements RoomAdminService {
 
         RoomStatus status = isActive ? RoomStatus.ACTIVE : RoomStatus.INACTIVE;
         roomAdminMapper.updateStatus(id, status.name());
+
+        roomCache.clearAll();
     }
 
     // --- Private Helper Methods (핵심 로직 분리) ---

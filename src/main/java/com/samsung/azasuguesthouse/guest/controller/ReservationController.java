@@ -53,7 +53,7 @@ public class ReservationController {
                 .body(response);
     }
 
-    @Operation(summary = "예약 취소하기", description = "객실 예약을 취소합니다.")
+    @Operation(summary = "예약 취소하기", description = "객실 예약을 취소합니다. (CANCELLED 상태로 변경)")
     @PostMapping("/reservations/{id}/delete")
     public ResponseEntity<SuccessResponse> deleteReservation(
             @PathVariable("id") long id,

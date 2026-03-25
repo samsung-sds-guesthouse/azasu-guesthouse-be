@@ -2,6 +2,7 @@ package com.samsung.azasuguesthouse.admin.reservation.service;
 
 import com.samsung.azasuguesthouse.admin.reservation.dto.ReservationResponse;
 import com.samsung.azasuguesthouse.admin.reservation.mapper.ReservationAdminMapper;
+import com.samsung.azasuguesthouse.common.cache.ReservationCache;
 import com.samsung.azasuguesthouse.entity.reservation.ReservationStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,11 @@ public class ReservationAdminServiceImpl implements ReservationAdminService {
     private static final int PAGE_SIZE = 10;
 
     private final ReservationAdminMapper reservationAdminMapper;
+    private final ReservationCache reservationCache;
 
-    public ReservationAdminServiceImpl(ReservationAdminMapper reservationAdminMapper) {
+    public ReservationAdminServiceImpl(ReservationAdminMapper reservationAdminMapper, ReservationCache reservationCache) {
         this.reservationAdminMapper = reservationAdminMapper;
+        this.reservationCache = reservationCache;
     }
 
     @Transactional(readOnly = true)
@@ -48,5 +51,7 @@ public class ReservationAdminServiceImpl implements ReservationAdminService {
         }
 
         reservationAdminMapper.updateStatus(id, reservationStatus.name());
+
+        reservationCache.clearAll();
     }
 }
