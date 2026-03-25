@@ -38,7 +38,7 @@ public class RoomController {
     }
 
 
-
+    @Operation(summary = "객실 검색", description = "날짜/인원수를 기준으로 객실 목록을 조회합니다.")
     @GetMapping("/rooms")
     public ResponseEntity<SuccessResponse> getAllRooms(
             @RequestParam(value = "check_in", required = false) LocalDate checkIn,

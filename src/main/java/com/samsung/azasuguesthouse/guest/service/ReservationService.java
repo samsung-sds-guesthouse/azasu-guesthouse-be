@@ -64,9 +64,24 @@ public class ReservationService {
         RoomDto roomDto = reservationMapper.selectRoomForUpdate(dto.getRoomId());
 
         // 날짜 체크
-        int overlappingCount = reservationMapper.checkAvailability(
-                dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut()
-        );
+        LocalDate today = LocalDate.now();
+        LocalDate checkIn = dto.getCheckIn();
+        LocalDate checkOut = dto.getCheckOut();
+
+        if (checkIn.isBefore(today.plusDays(1))) {
+            throw new IllegalArgumentException("체크인은 내일(" + today.plusDays(1) + ")부터 가능합니다.");
+        }
+
+        LocalDate maxDate = today.plusMonths(3);
+        if (checkOut.isAfter(maxDate)) {
+            throw new IllegalArgumentException("예약은 오늘로부터 3개월 이내(" + maxDate + ")까지만 가능합니다.");
+        }
+
+        if (!checkOut.isAfter(checkIn)) {
+            throw new IllegalArgumentException("체크아웃 날짜는 체크인 날짜보다 나중이어야 합니다.");
+        }
+
+        int overlappingCount = reservationMapper.checkAvailability(dto.getRoomId(), checkIn, checkOut);
         if (overlappingCount > 0) {
             throw new IllegalStateException("이미 예약된 날짜가 포함되어 있습니다.");
         }
