@@ -34,6 +34,26 @@ public class RoomService {
     // 캐시에서 조회
     public List<RoomDto> getAllRooms(LocalDate checkIn, LocalDate checkOut, Integer guestCount) {
 
+        LocalDate today = LocalDate.now();
+        LocalDate oneMonthLater = today.plusMonths(1);
+
+        if (guestCount != null && (guestCount <= 0 || guestCount > 10)) {
+            throw new IllegalArgumentException("인원 수는 1명 이상, 10명이하이어야 합니다.");
+        }
+
+        if (checkIn != null && (checkIn.isBefore(today.plusDays(1)) || checkIn.isAfter(oneMonthLater))) {
+            throw new IllegalArgumentException("체크인은 내일부터 한 달 이내여야 합니다.");
+        }
+
+        if (checkOut != null && checkOut.isAfter(oneMonthLater)) {
+            throw new IllegalArgumentException("체크아웃은 오늘로부터 한 달 이내여야 합니다.");
+        }
+
+        if (checkOut != null && !checkOut.isAfter(checkIn)) {
+            throw new IllegalArgumentException("체크아웃 날짜는 체크인 날짜보다 나중이어야 합니다.");
+        }
+
+
         List<RoomDto> rooms = roomCache.getAll();
 
         List<RoomDto> response = new ArrayList<>();
@@ -41,8 +61,7 @@ public class RoomService {
             if (guestCount != null && guestCount > room.getCapacity()) {
                 continue;
             }
-            if (checkIn != null && checkOut != null
-                    && !reservationCache.isAvailable(room.getRoomId(), checkIn, checkOut)) {
+            if (checkIn != null && checkOut != null &&!reservationCache.isAvailable(room.getRoomId(), checkIn, checkOut)) {
                 continue;
             }
             response.add(room);
@@ -50,17 +69,4 @@ public class RoomService {
 
         return response;
     }
-
-//    public void checkGuestCount(List<RoomDto> roomDtos, Integer guestCount) {
-//        if (guestCount != null) {
-//            roomDtos.removeIf(roomDto -> guestCount > roomDto.getCapacity());
-//        }
-//    }
-//
-//    public void checkDateRange(List<RoomDto> roomDtos, LocalDate checkIn, LocalDate checkOut) {
-//        if (checkIn != null && checkOut != null) {
-//            roomDtos.removeIf(roomDto -> reservationCache.isAvailable(roomDto.getRoomId(), checkIn, checkOut));
-//        }
-//    }
-
 }

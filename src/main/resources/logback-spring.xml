@@ -57,6 +57,15 @@
         </encoder>
     </appender>
 
+    <appender name="guest" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/guest/%d{yyyyMMdd}.txt</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %m%n</pattern>
+        </encoder>
+    </appender>
+
     <springProfile name="default,local,dev,prod">
         <root level="INFO" additivity="false">
             <appender-ref ref="info" />

@@ -1,5 +1,6 @@
 package com.samsung.azasuguesthouse.common.cache;
 
+import com.samsung.azasuguesthouse.common.log.Log;
 import com.samsung.azasuguesthouse.guest.dao.RoomMapper;
 import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import org.springframework.stereotype.Component;
@@ -46,12 +47,12 @@ public class RoomCache {
     public void reload() {
         synchronized (this) {
 
-            System.out.println("[Room] 캐시 로딩을 시작합니다.");
+            Log.info("[Room] 캐시 로딩을 시작합니다.");
 
             List<RoomDto> rooms = roomMapper.findAllRooms();
 
             if (rooms == null || rooms.isEmpty()) {
-                System.out.println("[Room] DB에 저장된 객실 정보가 없습니다.");
+                Log.info("[Room] DB에 저장된 객실 정보가 없습니다.");
                 return;
             }
 
@@ -77,17 +78,17 @@ public class RoomCache {
 
     public void printAll() {
         if (cache.isEmpty()) {
-            System.out.println("[Room] 캐시가 비어 있습니다.");
+            Log.info("[Room] 캐시가 비어 있습니다.");
             return;
         }
 
-        System.out.println("=== 전체 객실 정보 캐시 현황 ===");
+        Log.info("=== 전체 객실 정보 캐시 현황 ===");
         cache.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry -> {
                     System.out.printf("객실 ID: %d | 객실명: %s | 정보: %s%n",
                             entry.getKey(), entry.getValue().getRoomName(), entry.getValue());
                 });
-        System.out.println("===============================");
+        Log.info("==============================");
     }
 }
