@@ -1,14 +1,14 @@
 package com.samsung.azasuguesthouse.guest.service;
 
+import com.samsung.azasuguesthouse.common.cache.ReservationCache;
 import com.samsung.azasuguesthouse.common.cache.RoomCache;
-import com.samsung.azasuguesthouse.entity.room.Room;
 import com.samsung.azasuguesthouse.guest.dao.RoomMapper;
 import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -16,53 +16,51 @@ public class RoomService {
 
     private final RoomMapper roomMapper;
     private final RoomCache roomCache;
+    private final ReservationCache reservationCache;
 
-    public RoomService(RoomMapper roomMapper, RoomCache roomCache) {
+    public RoomService(RoomMapper roomMapper, RoomCache roomCache, ReservationCache reservationCache) {
         this.roomMapper = roomMapper;
         this.roomCache = roomCache;
+        this.reservationCache = reservationCache;
     }
 
+
+    // 캐시에서 조회
     public RoomDto getRoomById(long roomId) {
-
-        Room room = roomMapper.findById(roomId);
-
-        return new RoomDto(
-                room.getId(),
-                room.getRoomName(),
-                room.getPrice(),
-                room.getCapacity(),
-                room.getPicture(),
-                room.getDescription(),
-                room.getPolicy()
-        );
-
+        return roomCache.get(roomId);
     }
 
-    public List<RoomDto> getAllRooms() {
-        if (roomCache.isEmpty()) {
-            System.out.println("객실 캐시가 비어있습니다. DB에서 전체 데이터를 로드합니다.");
-            loadAllRoomsToCache();
+
+    // 캐시에서 조회
+    public List<RoomDto> getAllRooms(LocalDate checkIn, LocalDate checkOut, Integer guestCount) {
+
+        List<RoomDto> rooms = roomCache.getAll();
+
+        List<RoomDto> response = new ArrayList<>();
+        for (RoomDto room : rooms) {
+            if (guestCount != null && guestCount > room.getCapacity()) {
+                continue;
+            }
+            if (checkIn != null && checkOut != null
+                    && !reservationCache.isAvailable(room.getRoomId(), checkIn, checkOut)) {
+                continue;
+            }
+            response.add(room);
         }
 
-        roomCache.printAll();
-
-        return roomCache.getAll();
+        return response;
     }
 
-    private synchronized void loadAllRoomsToCache() {
-        // 다시 한 번 비어있는지 확인 (멀티쓰레드 방어)
-        if (roomCache.isEmpty()) {
-            // DB에서 모든 객실 정보를 가져옴
-            List<RoomDto> rooms = roomMapper.findAllRooms();
+//    public void checkGuestCount(List<RoomDto> roomDtos, Integer guestCount) {
+//        if (guestCount != null) {
+//            roomDtos.removeIf(roomDto -> guestCount > roomDto.getCapacity());
+//        }
+//    }
+//
+//    public void checkDateRange(List<RoomDto> roomDtos, LocalDate checkIn, LocalDate checkOut) {
+//        if (checkIn != null && checkOut != null) {
+//            roomDtos.removeIf(roomDto -> reservationCache.isAvailable(roomDto.getRoomId(), checkIn, checkOut));
+//        }
+//    }
 
-            // List를 Map<Long, RoomDto> 구조로 변환
-            Map<Long, RoomDto> allData = rooms.stream()
-                    .collect(Collectors.toMap(
-                            RoomDto::getRoomId, // Key: 객실 ID
-                            room -> room    // Value: 객실 객체
-                    ));
-
-            roomCache.putAll(allData);
-        }
-    }
 }

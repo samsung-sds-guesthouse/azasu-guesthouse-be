@@ -1,5 +1,6 @@
 package com.samsung.azasuguesthouse.common.cache;
 
+import com.samsung.azasuguesthouse.guest.dao.RoomMapper;
 import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import org.springframework.stereotype.Component;
 
@@ -8,39 +9,75 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class RoomCache {
 
     private final Map<Long, RoomDto> cache = new ConcurrentHashMap<>();
+    private final RoomMapper roomMapper;
 
-    // 특정 객실 정보 가져오기
+    public RoomCache(RoomMapper roomMapper) {
+        this.roomMapper = roomMapper;
+    }
+
+
     public RoomDto get(Long roomId) {
+        checkAndReload();
         return cache.get(roomId);
     }
 
-    // 전체 객실 목록 가져오기
     public List<RoomDto> getAll() {
+        checkAndReload();
         return new ArrayList<>(cache.values());
     }
 
-    public void putAll(Map<Long, RoomDto> allRooms) {
-        cache.putAll(allRooms);
+    private void checkAndReload() {
+        if (cache.isEmpty()) {
+            synchronized (this) {
+                if (cache.isEmpty()) {
+                    reload();
+                }
+            }
+        }
     }
 
-    // 캐시 전체 초기화
+    public void reload() {
+        synchronized (this) {
+
+            System.out.println("[Room] 캐시 로딩을 시작합니다.");
+
+            List<RoomDto> rooms = roomMapper.findAllRooms();
+
+            if (rooms == null || rooms.isEmpty()) {
+                System.out.println("[Room] DB에 저장된 객실 정보가 없습니다.");
+                return;
+            }
+
+            Map<Long, RoomDto> tempMap = rooms.stream()
+                    .collect(Collectors.toMap(RoomDto::getRoomId, Function.identity()));
+
+            cache.clear();
+            cache.putAll(tempMap);
+
+            printAll();
+        }
+    }
+
+
     public void clearAll() {
         cache.clear();
     }
 
-    // 캐시가 비어있는지 확인
     public boolean isEmpty() {
         return cache.isEmpty();
     }
 
+
     public void printAll() {
         if (cache.isEmpty()) {
-            System.out.println("객실 캐시가 비어 있습니다.");
+            System.out.println("[Room] 캐시가 비어 있습니다.");
             return;
         }
 
@@ -48,8 +85,8 @@ public class RoomCache {
         cache.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry -> {
-                    System.out.printf("객실 ID: %d | 객실 정보: %s%n",
-                            entry.getKey(), entry.getValue());
+                    System.out.printf("객실 ID: %d | 객실명: %s | 정보: %s%n",
+                            entry.getKey(), entry.getValue().getRoomName(), entry.getValue());
                 });
         System.out.println("===============================");
     }

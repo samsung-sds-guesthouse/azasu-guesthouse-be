@@ -16,7 +16,7 @@
     </resultMap>
 
     <select id="findAllRooms" resultMap="RoomResultMap">
-        SELECT * FROM rooms
+        SELECT * FROM rooms WHERE status = 'ACTIVE';
     </select>
 
     <select id="findById" resultType="com.samsung.azasuguesthouse.entity.room.Room">

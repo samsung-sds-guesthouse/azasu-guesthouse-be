@@ -80,10 +80,10 @@
     </insert>
 
     <!-- Lock -->
-    <select id="selectRoomForUpdate" resultType="long">
-        SELECT id
+    <select id="selectRoomForUpdate" resultType="com.samsung.azasuguesthouse.guest.dto.RoomDto">
+        SELECT *
         FROM rooms
-        WHERE id = #{roomId}
+        WHERE id = #{roomId} AND status = 'ACTIVE'
         FOR UPDATE
     </select>
 </mapper>

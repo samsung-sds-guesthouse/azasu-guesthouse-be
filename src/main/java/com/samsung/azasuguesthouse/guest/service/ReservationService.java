@@ -1,7 +1,6 @@
 package com.samsung.azasuguesthouse.guest.service;
 
 import com.samsung.azasuguesthouse.common.cache.ReservationCache;
-import com.samsung.azasuguesthouse.common.cache.RoomCache;
 import com.samsung.azasuguesthouse.guest.dao.ReservationMapper;
 import com.samsung.azasuguesthouse.guest.dto.*;
 import org.springframework.stereotype.Service;
@@ -18,21 +17,15 @@ public class ReservationService {
 
     private final ReservationMapper reservationMapper;
     private final ReservationCache reservationCache;
-    private final RoomCache roomCache;
 
-    public ReservationService(ReservationMapper reservationMapper, ReservationCache reservationCache, RoomCache roomCache, RoomService roomService) {
+    public ReservationService(ReservationMapper reservationMapper, ReservationCache reservationCache, RoomService roomService) {
         this.reservationMapper = reservationMapper;
         this.reservationCache = reservationCache;
-        this.roomCache = roomCache;
         this.roomService = roomService;
     }
 
     @Transactional(readOnly = true)
     public List<LocalDate> getReservedDates(Long roomId) {
-        // 캐시가 비어있다면 전체 데이터 로딩
-        if (reservationCache.isEmpty()) {
-            System.out.println("캐시가 비어있습니다. DB에서 전체 데이터를 로드합니다.");
-        }
 
         // 로딩 후 특정 방 데이터 반환 (없으면 빈 리스트 반환)
         return reservationCache.get(roomId) != null ?
@@ -57,8 +50,6 @@ public class ReservationService {
 
         int offset = (page - 1) * size;
 
-//        System.out.println(offset + " " + size + " " + reservationMapper.findReservationsByGuestId(guestId, offset, size).size());
-
         return new PaginationDto<>(
                 page,
                 maxPage,
@@ -70,18 +61,33 @@ public class ReservationService {
     public void makeReservation(ReservingRequestDto dto, long guestId) {
 
         // Lock
-        reservationMapper.selectRoomForUpdate(dto.getRoomId());
+        RoomDto roomDto = reservationMapper.selectRoomForUpdate(dto.getRoomId());
 
         // 날짜 체크
-        int overlappingCount = reservationMapper.checkAvailability(
-                dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut()
-        );
+        LocalDate today = LocalDate.now();
+        LocalDate checkIn = dto.getCheckIn();
+        LocalDate checkOut = dto.getCheckOut();
+
+        if (checkIn.isBefore(today.plusDays(1))) {
+            throw new IllegalArgumentException("체크인은 내일(" + today.plusDays(1) + ")부터 가능합니다.");
+        }
+
+        LocalDate maxDate = today.plusMonths(3);
+        if (checkOut.isAfter(maxDate)) {
+            throw new IllegalArgumentException("예약은 오늘로부터 3개월 이내(" + maxDate + ")까지만 가능합니다.");
+        }
+
+        if (!checkOut.isAfter(checkIn)) {
+            throw new IllegalArgumentException("체크아웃 날짜는 체크인 날짜보다 나중이어야 합니다.");
+        }
+
+        int overlappingCount = reservationMapper.checkAvailability(dto.getRoomId(), checkIn, checkOut);
         if (overlappingCount > 0) {
             throw new IllegalStateException("이미 예약된 날짜가 포함되어 있습니다.");
         }
 
         // 인원 체크
-        RoomDto roomDto = roomService.getRoomById(dto.getRoomId().longValue());
+//        RoomDto roomDto = roomService.getRoomById(dto.getRoomId().longValue());
         if (roomDto == null) {
             throw new IllegalStateException("존재하지 않는 객실입니다.");
         }

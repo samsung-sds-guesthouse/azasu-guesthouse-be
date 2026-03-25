@@ -4,9 +4,12 @@ import com.samsung.azasuguesthouse.common.response.SuccessResponse;
 import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import com.samsung.azasuguesthouse.guest.service.ReservationService;
 import com.samsung.azasuguesthouse.guest.service.RoomService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -20,6 +23,7 @@ public class RoomController {
         this.reservationService = reservationService;
     }
 
+    @Operation(summary = "객실 상세 정보 조회", description = "객실 ID를 기반으로 객실의 상세 정보를 조회합니다.")
     @GetMapping("/rooms/{id}")
     public ResponseEntity<SuccessResponse> getRoomById(
             @PathVariable("id") long roomId
@@ -33,11 +37,17 @@ public class RoomController {
                 .body(response);
     }
 
+
+    @Operation(summary = "객실 검색", description = "날짜/인원수를 기준으로 객실 목록을 조회합니다.")
     @GetMapping("/rooms")
-    public ResponseEntity<SuccessResponse> getAllRooms() {
+    public ResponseEntity<SuccessResponse> getAllRooms(
+            @RequestParam(value = "check_in", required = false) LocalDate checkIn,
+            @RequestParam(value = "check_out", required = false) LocalDate checkOut,
+            @RequestParam(value = "guest_count", required = false) Integer guestCount
+    ) {
 
         SuccessResponse response = new SuccessResponse();
-        response.putData("rooms", roomService.getAllRooms());
+        response.putData("rooms", roomService.getAllRooms(checkIn, checkOut, guestCount));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
