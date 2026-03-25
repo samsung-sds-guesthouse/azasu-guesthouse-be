@@ -16,5 +16,7 @@ public interface MemberDao {
     void updatePassword(Member member);
     void updateTry(Member member);
 
+    void deleteById(long memberId);
+
     void log(Map<String, Object> data);
 }
