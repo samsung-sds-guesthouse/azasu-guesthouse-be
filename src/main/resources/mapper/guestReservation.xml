@@ -42,7 +42,7 @@
         WHERE status != 'CANCELLED'
         <![CDATA[
         AND check_out >= CURDATE()
-        AND check_in <= DATE_ADD(CURDATE(), INTERVAL 3 MONTH)
+        AND check_in <= DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
         ]]>
     </select>
 
@@ -74,10 +74,12 @@
         )
     </insert>
 
-    <insert id="deleteReservation">
-        DELETE FROM reservations
-        WHERE id = #{id} AND guest_id = #{guestId}
-    </insert>
+    <update id="deleteReservation">
+        UPDATE reservations
+        SET status = 'CANCELLED'
+        WHERE id = #{id}
+        AND guest_id = #{guestId}
+    </update>
 
     <!-- Lock -->
     <select id="selectRoomForUpdate" resultType="com.samsung.azasuguesthouse.guest.dto.RoomDto">

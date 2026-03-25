@@ -72,9 +72,9 @@ public class ReservationService {
             throw new IllegalArgumentException("체크인은 내일(" + today.plusDays(1) + ")부터 가능합니다.");
         }
 
-        LocalDate maxDate = today.plusMonths(3);
+        LocalDate maxDate = today.plusMonths(1);
         if (checkOut.isAfter(maxDate)) {
-            throw new IllegalArgumentException("예약은 오늘로부터 3개월 이내(" + maxDate + ")까지만 가능합니다.");
+            throw new IllegalArgumentException("예약은 오늘로부터 1개월 이내(" + maxDate + ")까지만 가능합니다.");
         }
 
         if (!checkOut.isAfter(checkIn)) {
