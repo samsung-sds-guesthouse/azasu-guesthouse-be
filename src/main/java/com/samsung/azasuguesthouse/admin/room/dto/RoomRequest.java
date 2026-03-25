@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class RoomRequest {
 
     @NotBlank(message = "객실 이름은 필수입니다.")
+    @Size(min = 1, max = 20, message = "객실 이름은 1자 이상, 20자 이하")
     @Schema(description = "객실 이름", example = "아자수 1호실")
     private String roomName;
 
@@ -25,9 +26,11 @@ public class RoomRequest {
     private Integer price;
 
     @NotBlank(message = "설명은 필수입니다.")
+    @Size(min = 1, max = 2000, message = "설명은 1자 이상, 2000자 이하")
     private String description;
 
     @NotBlank(message = "이용 규칙은 필수입니다.")
+    @Size(min = 1, max = 2000, message = "이용 규칙은 1자 이상, 2000자 이하")
     private String policy;
 
     @NotNull(message = "사진은 필수입니다.")
