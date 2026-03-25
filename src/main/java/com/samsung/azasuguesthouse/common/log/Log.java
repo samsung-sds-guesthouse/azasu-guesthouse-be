@@ -15,6 +15,7 @@ public class Log {
     private final Logger warnLogger = LoggerFactory.getLogger("warn");
     private final Logger errorLogger = LoggerFactory.getLogger("error");
     private final Logger adminLogger = LoggerFactory.getLogger("admin");
+    private final Logger guestLogger = LoggerFactory.getLogger("guest");
 
     public static void debug(String msg) {
         instance.debugLogger.debug(msg);
@@ -27,6 +28,9 @@ public class Log {
     }
     public static void admin(String msg) {
         instance.adminLogger.info(msg);
+    }
+    public static void guest(String msg) {
+        instance.guestLogger.info(msg);
     }
     public static void error(String msg, Throwable t) {
         instance.errorLogger.error(msg, t);
