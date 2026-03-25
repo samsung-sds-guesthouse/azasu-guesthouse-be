@@ -36,6 +36,7 @@ public class RoomModifyRequest {
     // Getters and Setters
     public String getRoomName() { return roomName; }
     public void setRoomName(String roomName) { this.roomName = roomName; }
+    public void setRoom_name(String roomName) { this.roomName = roomName; } // snake_case form binding
     public Integer getCapacity() { return capacity; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }
     public Integer getPrice() { return price; }
