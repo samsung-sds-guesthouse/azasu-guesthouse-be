@@ -1,14 +1,14 @@
 package com.samsung.azasuguesthouse.guest.service;
 
+import com.samsung.azasuguesthouse.common.cache.ReservationCache;
 import com.samsung.azasuguesthouse.common.cache.RoomCache;
-import com.samsung.azasuguesthouse.entity.room.Room;
 import com.samsung.azasuguesthouse.guest.dao.RoomMapper;
 import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -16,40 +16,49 @@ public class RoomService {
 
     private final RoomMapper roomMapper;
     private final RoomCache roomCache;
+    private final ReservationCache reservationCache;
 
-    public RoomService(RoomMapper roomMapper, RoomCache roomCache) {
+    public RoomService(RoomMapper roomMapper, RoomCache roomCache, ReservationCache reservationCache) {
         this.roomMapper = roomMapper;
         this.roomCache = roomCache;
+        this.reservationCache = reservationCache;
     }
-
-    // 1. roomCache에서 가져와야 한다.
-    // 2. roomCache를 업데이트 하는 것은 roomCache 객체의 역할이다.
-    // 3. roomCache.get()을 사용하고 reload는 roomCache 내부에서 관리한다.
-    // 4. roomCache가 변경되는 것은 관리자가 객실 정보를 수정할 때이다.
-    // 5. 날짜, 인원 수 조건 검색은 reservationCache, roomCache를 활용한다.
 
 
     public RoomDto getRoomById(long roomId) {
-
-//        Room room = roomMapper.findById(roomId);
-//
-//        return new RoomDto(
-//                room.getId(),
-//                room.getRoomName(),
-//                room.getPrice(),
-//                room.getCapacity(),
-//                room.getPicture(),
-//                room.getDescription(),
-//                room.getPolicy()
-//        );
-
         return roomCache.get(roomId);
-
     }
 
 
-    public List<RoomDto> getAllRooms() {
+    public List<RoomDto> getAllRooms(LocalDate checkIn, LocalDate checkOut, Integer guestCount) {
 
-        return roomCache.getAll();
+        List<RoomDto> rooms = roomCache.getAll();
+
+        List<RoomDto> response = new ArrayList<>();
+        for (RoomDto room : rooms) {
+            if (guestCount != null && guestCount > room.getCapacity()) {
+                continue;
+            }
+            if (checkIn != null && checkOut != null
+                    && !reservationCache.isAvailable(room.getRoomId(), checkIn, checkOut)) {
+                continue;
+            }
+            response.add(room);
+        }
+
+        return response;
     }
+
+//    public void checkGuestCount(List<RoomDto> roomDtos, Integer guestCount) {
+//        if (guestCount != null) {
+//            roomDtos.removeIf(roomDto -> guestCount > roomDto.getCapacity());
+//        }
+//    }
+//
+//    public void checkDateRange(List<RoomDto> roomDtos, LocalDate checkIn, LocalDate checkOut) {
+//        if (checkIn != null && checkOut != null) {
+//            roomDtos.removeIf(roomDto -> reservationCache.isAvailable(roomDto.getRoomId(), checkIn, checkOut));
+//        }
+//    }
+
 }
