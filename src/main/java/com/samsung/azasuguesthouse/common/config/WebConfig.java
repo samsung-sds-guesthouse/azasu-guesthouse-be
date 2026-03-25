@@ -5,6 +5,7 @@ import com.samsung.azasuguesthouse.common.auth.AuthInfoResolver;
 import com.samsung.azasuguesthouse.common.auth.SessionCheckInterceptor;
 import com.samsung.azasuguesthouse.common.log.RequestLogInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -55,9 +56,11 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/v1/auth/sms",
                         "/api/v1/auth/duplicate-id"
                 )
+                .excludeHttpMethods(HttpMethod.OPTIONS)
                 .order(2);
         registry.addInterceptor(adminCheckInterceptor)
                 .addPathPatterns("/api/v1/admin/**")
+                .excludeHttpMethods(HttpMethod.OPTIONS)
                 .order(3);
     }
 
