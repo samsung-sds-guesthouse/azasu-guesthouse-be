@@ -88,6 +88,10 @@
             <appender-ref ref="admin"/>
             <appender-ref ref="console"/>
         </logger>
+        <logger name="guest" level="info" additivity="false">
+            <appender-ref ref="guest"/>
+            <appender-ref ref="console"/>
+        </logger>
     </springProfile>
 
 </configuration>
