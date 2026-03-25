@@ -4,12 +4,12 @@ import java.util.Base64;
 
 public class ReservationResponse {
 
-    private Long id;
-    private Long guestId;
+    private long id;
+    private long guestId;
     private String guestName;
     private String guestPhone;
     private Integer guestCount;
-    private Long roomId;
+    private long roomId;
     private String roomName;
     private String checkIn;
     private String checkOut;
@@ -22,12 +22,12 @@ public class ReservationResponse {
     public ReservationResponse() {}
 
     // Getters
-    public Long getId() { return id; }
-    public Long getGuestId() { return guestId; }
+    public long getId() { return id; }
+    public long getGuestId() { return guestId; }
     public String getGuestName() { return guestName; }
     public String getGuestPhone() { return guestPhone; }
     public Integer getGuestCount() { return guestCount; }
-    public Long getRoomId() { return roomId; }
+    public long getRoomId() { return roomId; }
     public String getRoomName() { return roomName; }
     public String getCheckIn() { return checkIn; }
     public String getCheckOut() { return checkOut; }
@@ -36,12 +36,12 @@ public class ReservationResponse {
     public String getPicture() { return picture; }
 
     // Setters (MyBatis 매핑 필수)
-    public void setId(Long id) { this.id = id; }
-    public void setGuestId(Long guestId) { this.guestId = guestId; }
+    public void setId(long id) { this.id = id; }
+    public void setGuestId(long guestId) { this.guestId = guestId; }
     public void setGuestName(String guestName) { this.guestName = guestName; }
     public void setGuestPhone(String guestPhone) { this.guestPhone = guestPhone; }
     public void setGuestCount(Integer guestCount) { this.guestCount = guestCount; }
-    public void setRoomId(Long roomId) { this.roomId = roomId; }
+    public void setRoomId(long roomId) { this.roomId = roomId; }
     public void setRoomName(String roomName) { this.roomName = roomName; }
     public void setCheckIn(String checkIn) { this.checkIn = checkIn; }
     public void setCheckOut(String checkOut) { this.checkOut = checkOut; }
