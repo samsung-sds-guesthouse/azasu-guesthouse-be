@@ -1,7 +1,6 @@
 package com.samsung.azasuguesthouse.guest.service;
 
 import com.samsung.azasuguesthouse.common.cache.ReservationCache;
-import com.samsung.azasuguesthouse.common.cache.RoomCache;
 import com.samsung.azasuguesthouse.guest.dao.ReservationMapper;
 import com.samsung.azasuguesthouse.guest.dto.*;
 import org.springframework.stereotype.Service;
@@ -18,21 +17,15 @@ public class ReservationService {
 
     private final ReservationMapper reservationMapper;
     private final ReservationCache reservationCache;
-    private final RoomCache roomCache;
 
-    public ReservationService(ReservationMapper reservationMapper, ReservationCache reservationCache, RoomCache roomCache, RoomService roomService) {
+    public ReservationService(ReservationMapper reservationMapper, ReservationCache reservationCache, RoomService roomService) {
         this.reservationMapper = reservationMapper;
         this.reservationCache = reservationCache;
-        this.roomCache = roomCache;
         this.roomService = roomService;
     }
 
     @Transactional(readOnly = true)
     public List<LocalDate> getReservedDates(Long roomId) {
-        // 캐시가 비어있다면 전체 데이터 로딩
-        if (reservationCache.isEmpty()) {
-            System.out.println("캐시가 비어있습니다. DB에서 전체 데이터를 로드합니다.");
-        }
 
         // 로딩 후 특정 방 데이터 반환 (없으면 빈 리스트 반환)
         return reservationCache.get(roomId) != null ?
@@ -56,8 +49,6 @@ public class ReservationService {
         }
 
         int offset = (page - 1) * size;
-
-//        System.out.println(offset + " " + size + " " + reservationMapper.findReservationsByGuestId(guestId, offset, size).size());
 
         return new PaginationDto<>(
                 page,
