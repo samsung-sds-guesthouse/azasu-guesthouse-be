@@ -61,7 +61,7 @@ public class ReservationService {
     public void makeReservation(ReservingRequestDto dto, long guestId) {
 
         // Lock
-        reservationMapper.selectRoomForUpdate(dto.getRoomId());
+        RoomDto roomDto = reservationMapper.selectRoomForUpdate(dto.getRoomId());
 
         // 날짜 체크
         int overlappingCount = reservationMapper.checkAvailability(
@@ -72,7 +72,7 @@ public class ReservationService {
         }
 
         // 인원 체크
-        RoomDto roomDto = roomService.getRoomById(dto.getRoomId().longValue());
+//        RoomDto roomDto = roomService.getRoomById(dto.getRoomId().longValue());
         if (roomDto == null) {
             throw new IllegalStateException("존재하지 않는 객실입니다.");
         }

@@ -3,6 +3,7 @@ package com.samsung.azasuguesthouse.guest.dao;
 
 import com.samsung.azasuguesthouse.guest.dto.ReservationDto;
 import com.samsung.azasuguesthouse.guest.dto.ReservationRangeDto;
+import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -41,5 +42,5 @@ public interface ReservationMapper {
             @Param("guestId") long guestId
     );
 
-    void selectRoomForUpdate(long roomId);
+    RoomDto selectRoomForUpdate(long roomId);
 }

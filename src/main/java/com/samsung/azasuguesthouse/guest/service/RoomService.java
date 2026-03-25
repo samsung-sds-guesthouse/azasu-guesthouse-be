@@ -25,11 +25,13 @@ public class RoomService {
     }
 
 
+    // 캐시에서 조회
     public RoomDto getRoomById(long roomId) {
         return roomCache.get(roomId);
     }
 
 
+    // 캐시에서 조회
     public List<RoomDto> getAllRooms(LocalDate checkIn, LocalDate checkOut, Integer guestCount) {
 
         List<RoomDto> rooms = roomCache.getAll();
