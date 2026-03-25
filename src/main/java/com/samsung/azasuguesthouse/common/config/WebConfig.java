@@ -45,9 +45,15 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(requestLogInterceptor)
                 .addPathPatterns("/**")
                 .order(1);
+        registry.addInterceptor(adminCheckInterceptor)
+                .addPathPatterns("/api/v1/admin/**")
+                .excludeHttpMethods(HttpMethod.OPTIONS)
+                .order(2);
         registry.addInterceptor(sessionCheckInterceptor)
                 .addPathPatterns("/api/v1/**")
                 .excludePathPatterns(
+                        "/api/v1/admin/**",
+                        "/api/v1/rooms/**",
                         "/api/v1/auth/signup",
                         "/api/v1/auth/login",
                         "/api/v1/auth/logout",
@@ -56,10 +62,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/v1/auth/sms",
                         "/api/v1/auth/duplicate-id"
                 )
-                .excludeHttpMethods(HttpMethod.OPTIONS)
-                .order(2);
-        registry.addInterceptor(adminCheckInterceptor)
-                .addPathPatterns("/api/v1/admin/**")
                 .excludeHttpMethods(HttpMethod.OPTIONS)
                 .order(3);
     }

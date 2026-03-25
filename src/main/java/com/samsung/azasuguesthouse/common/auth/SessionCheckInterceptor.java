@@ -19,10 +19,12 @@ public class SessionCheckInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession(false);
 
-        if (session == null || session.getAttribute("member") == null || !(session.getAttribute("member") instanceof Member member)) {
+        if (session == null
+                || session.getAttribute("member") == null
+                || !(session.getAttribute("member") instanceof Member)
+        ) {
             throw new UnauthorizedException("invalid_member_session");
         }
-        request.setAttribute("member", member);
 
         return true;
     }
