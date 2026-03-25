@@ -3,6 +3,7 @@ package com.samsung.azasuguesthouse.guest.service;
 import com.samsung.azasuguesthouse.common.cache.ReservationCache;
 import com.samsung.azasuguesthouse.common.cache.RoomCache;
 import com.samsung.azasuguesthouse.entity.room.RoomStatus;
+import com.samsung.azasuguesthouse.common.log.Log;
 import com.samsung.azasuguesthouse.guest.dao.ReservationMapper;
 import com.samsung.azasuguesthouse.guest.dto.*;
 import org.springframework.stereotype.Service;
@@ -99,17 +100,42 @@ public class ReservationService {
         }
 
         int capacity = roomDto.getCapacity();
+
+        if (dto.getGuestCount() < 1) {
+            throw new IllegalArgumentException("예약 인원은 최소 1명 이상이어야 합니다.");
+        }
+
         if (dto.getGuestCount() > capacity) {
             throw new IllegalStateException("예약 인원이 객실 최대 수용 인원을 초과합니다.");
         }
 
         // 가격 계산
         long nights = ChronoUnit.DAYS.between(dto.getCheckIn(), dto.getCheckOut());
-        int totalPrice = roomDto.getPrice() * (int) nights;
+        int totalPrice;
+
+        try {
+            long totalLong = Math.multiplyExact((long) roomDto.getPrice(), nights);
+
+            // 이후 int 범위를 넘는지 체크하거나, 아예 totalPrice를 long으로 유지
+            if (totalLong > Integer.MAX_VALUE) {
+                throw new ArithmeticException("결제 금액이 제한 범위를 초과했습니다.");
+            }
+            totalPrice = (int) totalLong;
+
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException("예약 기간 또는 금액이 너무 커서 처리할 수 없습니다.");
+        }
 
 
         // DB 삽입
         reservationMapper.createReservation(guestId, dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut(), dto.getGuestCount(), totalPrice);
+
+        String message = String.format(
+                "[Guest] 새로운 예약이 생성되었습니다. Guest ID: %s, Room ID: %s, Check-in: %s, Check-out: %s, Guest Count: %d, Total Price: %d",
+                guestId, dto.getRoomId(), dto.getCheckIn(), dto.getCheckOut(), dto.getGuestCount(), totalPrice
+        );
+
+        Log.guest(message);
 
         // 캐시 삭제
         reservationCache.clearAll();
@@ -119,6 +145,12 @@ public class ReservationService {
     public void deleteReservationById(long id, long guestId) {
         // DB 삭제
         reservationMapper.deleteReservation(id, guestId);
+
+        String message = String.format(
+                "[Guest] 예약이 취소되었습니다. Reservation ID: %s, Guest ID: %s",
+                id, guestId
+        );
+        Log.guest(message);
 
         // 캐시 삭제
         reservationCache.clearAll();
