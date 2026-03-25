@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public final class ImageValidator {
 
-    private static final int MAX_FILE_SIZE_MB = 5;
+    private static final int MAX_FILE_SIZE_MB = 15;
     private static final long MAX_FILE_SIZE_BYTES = (long) MAX_FILE_SIZE_MB * 1024 * 1024;
 
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png", "webp");
