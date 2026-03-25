@@ -1,5 +1,6 @@
 package com.samsung.azasuguesthouse.guest.dto;
 
+import com.samsung.azasuguesthouse.entity.room.RoomStatus;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
 
@@ -13,12 +14,13 @@ public class RoomDto {
     private byte[] picture;
     private String description;
     private String policy;
+    private RoomStatus status;
 
 //    public RoomDto() {
 //    }
 
     public RoomDto(long roomId,String roomName, Integer price, Integer capacity,
-                   byte[] picture, String description, String policy) {
+                   byte[] picture, String description, String policy, RoomStatus status) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.price = price;
@@ -26,6 +28,7 @@ public class RoomDto {
         this.picture = picture;
         this.description = description;
         this.policy = policy;
+        this.status = status;
     }
 
     public long getRoomId() { return roomId; }
@@ -35,6 +38,7 @@ public class RoomDto {
     public byte[] getPicture() { return picture; }
     public String getDescription() { return description; }
     public String getPolicy() { return policy; }
+    public RoomStatus getStatus() { return status; }
 
 //    public void setRoomId(Integer roomId) { this.roomId = roomId; }
 //    public void setRoomName(String roomName) { this.roomName = roomName; }

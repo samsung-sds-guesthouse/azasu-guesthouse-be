@@ -33,6 +33,10 @@ public class RoomCache {
         return new ArrayList<>(cache.values());
     }
 
+    public boolean contains(Long roomId) {
+        return cache.containsKey(roomId);
+    }
+
     private void checkAndReload() {
         if (cache.isEmpty()) {
             synchronized (this) {

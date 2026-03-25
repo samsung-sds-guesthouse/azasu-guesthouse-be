@@ -1,6 +1,8 @@
 package com.samsung.azasuguesthouse.guest.service;
 
 import com.samsung.azasuguesthouse.common.cache.ReservationCache;
+import com.samsung.azasuguesthouse.common.cache.RoomCache;
+import com.samsung.azasuguesthouse.entity.room.RoomStatus;
 import com.samsung.azasuguesthouse.guest.dao.ReservationMapper;
 import com.samsung.azasuguesthouse.guest.dto.*;
 import org.springframework.stereotype.Service;
@@ -13,19 +15,23 @@ import java.util.*;
 @Service
 public class ReservationService {
 
-    private final RoomService roomService;
-
     private final ReservationMapper reservationMapper;
     private final ReservationCache reservationCache;
+    private final RoomCache roomCache;
 
-    public ReservationService(ReservationMapper reservationMapper, ReservationCache reservationCache, RoomService roomService) {
+    public ReservationService(ReservationMapper reservationMapper, ReservationCache reservationCache, RoomCache roomCache) {
         this.reservationMapper = reservationMapper;
         this.reservationCache = reservationCache;
-        this.roomService = roomService;
+        this.roomCache = roomCache;
     }
 
     @Transactional(readOnly = true)
     public List<LocalDate> getReservedDates(Long roomId) {
+
+        // room 캐시에는 ACTIVE 인 room만 있음
+        if (!roomCache.contains(roomId)) {
+            return Collections.emptyList();
+        }
 
         // 로딩 후 특정 방 데이터 반환 (없으면 빈 리스트 반환)
         return reservationCache.get(roomId) != null ?
