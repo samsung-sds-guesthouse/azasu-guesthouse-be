@@ -19,7 +19,7 @@
         SELECT * FROM rooms WHERE status = 'ACTIVE';
     </select>
 
-    <select id="findById" resultType="com.samsung.azasuguesthouse.entity.room.Room">
+    <select id="findById" resultType="com.samsung.azasuguesthouse.guest.dto.RoomDto">
         SELECT
             id,
             room_name AS roomName,

@@ -1,6 +1,7 @@
 package com.samsung.azasuguesthouse.guest.dto;
 
 import com.samsung.azasuguesthouse.entity.reservation.ReservationStatus;
+import com.samsung.azasuguesthouse.entity.room.RoomStatus;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
 
@@ -22,6 +23,7 @@ public class ReservationDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private byte[] picture;
+    public RoomStatus roomStatus;
 
     public ReservationDto(long id,
                           long guestId,
@@ -34,7 +36,8 @@ public class ReservationDto {
                           ReservationStatus status,
                           byte[] picture,
                           LocalDateTime createdAt,
-                          LocalDateTime updatedAt) {
+                          LocalDateTime updatedAt,
+                          RoomStatus roomStatus) {
         this.id = id;
         this.guestId = guestId;
         this.roomId = roomId;
@@ -47,6 +50,7 @@ public class ReservationDto {
         this.picture = picture;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.roomStatus = roomStatus;
     }
 
     public long getId() { return id; }
@@ -61,4 +65,5 @@ public class ReservationDto {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public byte[] getPicture() { return picture; }
+    public RoomStatus getRoomStatus() {return roomStatus; }
 }

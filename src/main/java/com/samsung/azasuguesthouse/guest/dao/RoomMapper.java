@@ -9,6 +9,6 @@ import java.util.List;
 @Mapper
 public interface RoomMapper {
 
-    Room findById(long id);
+    RoomDto findById(long id);
     List<RoomDto> findAllRooms();
 }
