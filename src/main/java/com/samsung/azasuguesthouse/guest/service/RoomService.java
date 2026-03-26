@@ -2,6 +2,7 @@ package com.samsung.azasuguesthouse.guest.service;
 
 import com.samsung.azasuguesthouse.common.cache.ReservationCache;
 import com.samsung.azasuguesthouse.common.cache.RoomCache;
+import com.samsung.azasuguesthouse.guest.dao.ReservationMapper;
 import com.samsung.azasuguesthouse.guest.dao.RoomMapper;
 import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,24 @@ import java.util.List;
 public class RoomService {
 
     private final RoomMapper roomMapper;
+    private final ReservationMapper reservationMapper;
     private final RoomCache roomCache;
     private final ReservationCache reservationCache;
 
-    public RoomService(RoomMapper roomMapper, RoomCache roomCache, ReservationCache reservationCache) {
+    public RoomService(RoomMapper roomMapper, RoomCache roomCache, ReservationCache reservationCache, ReservationMapper reservationMapper) {
         this.roomMapper = roomMapper;
         this.roomCache = roomCache;
         this.reservationCache = reservationCache;
+        this.reservationMapper = reservationMapper;
     }
 
+    public RoomDto getInactiveRoom(long roomId, long guestId) {
+
+        if(reservationMapper.checkReservationExist(roomId, guestId) > 0) {
+            return roomMapper.findById(roomId);
+        }
+        return null;
+    }
 
     // 캐시에서 조회
     public RoomDto getRoomById(long roomId) {
@@ -34,6 +44,26 @@ public class RoomService {
     // 캐시에서 조회
     public List<RoomDto> getAllRooms(LocalDate checkIn, LocalDate checkOut, Integer guestCount) {
 
+        LocalDate today = LocalDate.now();
+        LocalDate oneMonthLater = today.plusMonths(1);
+
+        if (guestCount != null && (guestCount <= 0 || guestCount > 10)) {
+            throw new IllegalArgumentException("인원 수는 1명 이상, 10명이하이어야 합니다.");
+        }
+
+        if (checkIn != null && (checkIn.isBefore(today.plusDays(1)) || checkIn.isAfter(oneMonthLater))) {
+            throw new IllegalArgumentException("체크인은 내일부터 한 달 이내여야 합니다.");
+        }
+
+        if (checkOut != null && checkOut.isAfter(oneMonthLater)) {
+            throw new IllegalArgumentException("체크아웃은 오늘로부터 한 달 이내여야 합니다.");
+        }
+
+        if (checkOut != null && !checkOut.isAfter(checkIn)) {
+            throw new IllegalArgumentException("체크아웃 날짜는 체크인 날짜보다 나중이어야 합니다.");
+        }
+
+
         List<RoomDto> rooms = roomCache.getAll();
 
         List<RoomDto> response = new ArrayList<>();
@@ -41,8 +71,7 @@ public class RoomService {
             if (guestCount != null && guestCount > room.getCapacity()) {
                 continue;
             }
-            if (checkIn != null && checkOut != null
-                    && !reservationCache.isAvailable(room.getRoomId(), checkIn, checkOut)) {
+            if (checkIn != null && checkOut != null &&!reservationCache.isAvailable(room.getRoomId(), checkIn, checkOut)) {
                 continue;
             }
             response.add(room);
@@ -50,17 +79,4 @@ public class RoomService {
 
         return response;
     }
-
-//    public void checkGuestCount(List<RoomDto> roomDtos, Integer guestCount) {
-//        if (guestCount != null) {
-//            roomDtos.removeIf(roomDto -> guestCount > roomDto.getCapacity());
-//        }
-//    }
-//
-//    public void checkDateRange(List<RoomDto> roomDtos, LocalDate checkIn, LocalDate checkOut) {
-//        if (checkIn != null && checkOut != null) {
-//            roomDtos.removeIf(roomDto -> reservationCache.isAvailable(roomDto.getRoomId(), checkIn, checkOut));
-//        }
-//    }
-
 }

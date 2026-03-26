@@ -18,7 +18,8 @@
             r.status AS status,
             rm.picture AS picture,
             r.created_at AS createdAt,
-            r.updated_at AS updatedAt
+            r.updated_at AS updatedAt,
+            rm.status AS roomStatus
         FROM reservations r
         JOIN rooms rm
         ON r.room_id = rm.id
@@ -87,5 +88,11 @@
         FROM rooms
         WHERE id = #{roomId} AND status = 'ACTIVE'
         FOR UPDATE
+    </select>
+
+    <select id="checkReservationExist" resultType="int">
+        SELECT COUNT(*)
+        FROM reservations
+        WHERE room_id = #{roomId} AND guest_id = #{guestId}
     </select>
 </mapper>

@@ -1,6 +1,8 @@
 package com.samsung.azasuguesthouse.guest.controller;
 
+import com.samsung.azasuguesthouse.common.auth.AuthInfo;
 import com.samsung.azasuguesthouse.common.response.SuccessResponse;
+import com.samsung.azasuguesthouse.entity.member.Member;
 import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import com.samsung.azasuguesthouse.guest.service.ReservationService;
 import com.samsung.azasuguesthouse.guest.service.RoomService;
@@ -27,10 +29,28 @@ public class RoomController {
     @GetMapping("/rooms/{id}")
     public ResponseEntity<SuccessResponse> getRoomById(
             @PathVariable("id") long roomId
-    ) {
+            ) {
+
         SuccessResponse response = new SuccessResponse();
         response.putData("room", roomService.getRoomById(roomId));
         response.putData("reserved_dates", reservationService.getReservedDates(roomId));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @Operation(summary = "비활성화 객실 상세 정보 조회", description = "객실 ID를 기반으로 객실의 상세 정보를 조회합니다.(로그인 필요)")
+    @GetMapping("/rooms/inactive/{id}")
+    public ResponseEntity<SuccessResponse> getInactiveRoomById(
+            @PathVariable("id") long roomId,
+            @AuthInfo Member member
+    ) {
+
+        long guestId = member.getId();
+
+        SuccessResponse response = new SuccessResponse();
+        response.putData("room", roomService.getInactiveRoom(roomId, guestId));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
