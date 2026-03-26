@@ -43,4 +43,6 @@ public interface ReservationMapper {
     );
 
     RoomDto selectRoomForUpdate(long roomId);
+
+    int checkReservationExist(long roomId, long guestId);
 }

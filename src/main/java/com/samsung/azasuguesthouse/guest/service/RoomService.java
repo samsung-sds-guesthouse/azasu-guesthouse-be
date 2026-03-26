@@ -2,6 +2,7 @@ package com.samsung.azasuguesthouse.guest.service;
 
 import com.samsung.azasuguesthouse.common.cache.ReservationCache;
 import com.samsung.azasuguesthouse.common.cache.RoomCache;
+import com.samsung.azasuguesthouse.guest.dao.ReservationMapper;
 import com.samsung.azasuguesthouse.guest.dao.RoomMapper;
 import com.samsung.azasuguesthouse.guest.dto.RoomDto;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,24 @@ import java.util.List;
 public class RoomService {
 
     private final RoomMapper roomMapper;
+    private final ReservationMapper reservationMapper;
     private final RoomCache roomCache;
     private final ReservationCache reservationCache;
 
-    public RoomService(RoomMapper roomMapper, RoomCache roomCache, ReservationCache reservationCache) {
+    public RoomService(RoomMapper roomMapper, RoomCache roomCache, ReservationCache reservationCache, ReservationMapper reservationMapper) {
         this.roomMapper = roomMapper;
         this.roomCache = roomCache;
         this.reservationCache = reservationCache;
+        this.reservationMapper = reservationMapper;
     }
 
+    public RoomDto getInactiveRoom(long roomId, long guestId) {
+
+        if(reservationMapper.checkReservationExist(roomId, guestId) > 0) {
+            return roomMapper.findById(roomId);
+        }
+        return null;
+    }
 
     // 캐시에서 조회
     public RoomDto getRoomById(long roomId) {
