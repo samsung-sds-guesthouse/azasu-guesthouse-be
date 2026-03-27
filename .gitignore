@@ -31,6 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-docker-compose.yml
+#docker-compose.yml
 
 logs/
