@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:8.0
+    container_name: azasu-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "guesthouse"
+      MYSQL_USER: "sds"
+      MYSQL_PASSWORD: "1234"
+      TZ: "Asia/Seoul"
+    volumes:
+      - ./mysql_data:/var/lib/mysql # 데이터 영구 보존을 위한 볼륨 설정
