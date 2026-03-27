@@ -24,11 +24,26 @@ public class ExceptionResponse {
         data.put("msg", msg);
     }
 
+    public ExceptionResponse(int status, String msg, Map<String, Object> data) {
+        if (status < 100 || status >= 600) {
+            status = HttpServletResponse.SC_BAD_REQUEST;
+        }
+        this.status = status;
+        this.data = new HashMap<>(data);
+        this.data.put("msg", msg);
+    }
+
     public int getStatus() {
         return this.status;
     }
 
     public Map<String, Object> getData() {
         return this.data;
+    }
+    public void putData(String k, Object v) {
+        this.data.put(k, v);
+    }
+    public void removeData(String k) {
+        this.data.remove(k);
     }
 }

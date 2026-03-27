@@ -11,6 +11,8 @@ public interface RoomAdminMapper {
 
     List<Room> findAll();
 
+    Room findById(long id);
+
     void update(Room room);
 
     void updateStatus(@Param("id") Long id, @Param("status") String status);

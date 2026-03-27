@@ -1,10 +1,7 @@
 package com.samsung.azasuguesthouse.admin.room.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -13,11 +10,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class RoomRequest {
 
     @NotBlank(message = "객실 이름은 필수입니다.")
+    @Size(min = 1, max = 20, message = "객실 이름은 1자 이상, 20자 이하")
     @Schema(description = "객실 이름", example = "아자수 1호실")
     private String roomName;
 
     @NotNull(message = "최소 인원은 필수입니다.")
     @Min(value = 1, message = "최소 1명 이상이어야 합니다.")
+    @Max(value = 10, message = "최대 10명까지 가능합니다.")
     @Schema(description = "수용 인원", example = "2")
     private Integer capacity;
 
@@ -27,9 +26,11 @@ public class RoomRequest {
     private Integer price;
 
     @NotBlank(message = "설명은 필수입니다.")
+    @Size(min = 1, max = 2000, message = "설명은 1자 이상, 2000자 이하")
     private String description;
 
     @NotBlank(message = "이용 규칙은 필수입니다.")
+    @Size(min = 1, max = 2000, message = "이용 규칙은 1자 이상, 2000자 이하")
     private String policy;
 
     @NotNull(message = "사진은 필수입니다.")
@@ -40,6 +41,7 @@ public class RoomRequest {
 
     public String getRoomName() { return roomName; }
     public void setRoomName(String roomName) { this.roomName = roomName; }
+    public void setRoom_name(String roomName) { this.roomName = roomName; } // snake_case form binding
 
     public Integer getCapacity() { return capacity; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }

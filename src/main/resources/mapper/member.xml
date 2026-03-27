@@ -4,11 +4,41 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.samsung.azasuguesthouse.member.dao.MemberDao">
-<!--    <insert id="registerMember" parameterType="Member" >-->
-<!--        INSERT INTO member (id,pw,email) VALUES (#{id}, #{pw}, #{email})-->
-<!--    </insert>-->
+    <select id="countByLoginId" parameterType="string" resultType="int">
+        SELECT COUNT(`id`)
+        FROM `members`
+        WHERE `login_id` = #{loginId}
+    </select>
 
-<!--    <select id="upidLogin" parameterType="Member" resultType="Member">-->
-<!--        SELECT no, email FROM member WHERE id=#{id} and pw=#{pw}-->
-<!--    </select>-->
+    <select id="selectByLoginId" parameterType="string" resultType="com.samsung.azasuguesthouse.entity.member.Member">
+        SELECT *
+        FROM `members`
+        WHERE `login_id` = #{loginId}
+    </select>
+
+    <insert id="insert" parameterType="com.samsung.azasuguesthouse.entity.member.Member" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `members`(`login_id`, `password`, `name`, `phone`)
+        VALUES (#{loginId}, '', #{name}, #{phone})
+    </insert>
+
+    <update id="updatePassword" parameterType="com.samsung.azasuguesthouse.entity.member.Member">
+        UPDATE `members`
+        SET `password` = #{password}
+        WHERE `id` = #{id}
+    </update>
+    <update id="updateTry" parameterType="com.samsung.azasuguesthouse.entity.member.Member">
+        UPDATE `members`
+        SET `try_count` = #{tryCount}, `last_try_at` = #{lastTryAt}
+        WHERE `id` = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM `members`
+        WHERE id = #{id}
+    </delete>
+
+    <insert id="log" parameterType="map">
+        INSERT INTO `log_auth`(`member_id`, `type`, `extra`)
+        VALUES (#{member_id}, #{type}, #{extra})
+    </insert>
 </mapper>
